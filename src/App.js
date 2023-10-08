@@ -1,24 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import { Container, CssBaseline, Paper, ThemeProvider, createMuiTheme } from "@material-ui/core";
+import { BrowserRouter, Route } from "react-router-dom";
+import SelectionPage from "./screens/SelectionPage";
+import MainPage from "./screens/MainPage";
+
+const theme = createMuiTheme({
+  typograhpy: {
+    h1: { fontWeight: 'bold' },
+    h2: {
+      fontSize: '2rem',
+      color: 'black',
+    },
+    h3: {
+      fontSize: '1.8rem',
+      fontWeight: 'bold',
+      color: 'white',
+    },
+  },
+  palette: {
+    primary: {main: '#ff1744'},
+    secondary: {
+      main: '#118e16',
+      contrastText: '#ffffff',
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+     <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container maxWidth="sm">
+        <Paper>
+          <Route path="/" component={MainPage} exact={true}></Route> 
+          <Route path="/Selection" component={SelectionPage} exact={true}></Route>
+        </Paper>
+      </Container>
+    </ThemeProvider>
+    </BrowserRouter>
   );
 }
 

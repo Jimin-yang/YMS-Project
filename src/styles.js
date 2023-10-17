@@ -42,7 +42,8 @@ export const useStyles = makeStyles((theme) => ({
         marginRight: '10px',
     },
     appIcon: {
-        fontSize: '5rem',
+        src: "images/logo.png",
+        fontSize: '20rem',
     },
     cards: {
         display: 'flex',

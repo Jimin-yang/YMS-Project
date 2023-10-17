@@ -2,7 +2,7 @@ import { Box, Card, CardContent, Fade, Typography, CardActionArea, CardMedia } f
 import React from 'react';
 import {useStyles} from '../styles';
 
-export default function SelectionPage() {
+function SelectionPage() {
     const styles = useStyles();
     return (
         <Fade in={true}>
@@ -145,3 +145,5 @@ export default function SelectionPage() {
         </Fade>
     )
 }
+
+export default SelectionPage; // SelectionPage 컴포넌트를 한 번만 export

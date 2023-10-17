@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Card, CardActionArea, Box, Typography, Button, TextField } from '@material-ui/core';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import {useStyles} from '../styles'; 
 
-
-
-
-export default function MainPage(props) {
+function MainPage() {
     const styles = useStyles();
+    const history = useHistory();
     const [isAdmin, setIsAdmin] = useState(false);
     const [password, setPassword] = useState('');
     const correctPassword = 'admin123'; // 비밀번호를 설정합니다.
 
-    const handleAdminClick = () => {
-        setIsAdmin(true);
+    const handleAdminClick = (event) => {
+        event.stopPropagation(); // 이벤트 버블링을 막습니다.
+        history.push('/AdminPage');
     }
 
     const handlePasswordChange = (event) => {
@@ -34,24 +34,23 @@ export default function MainPage(props) {
             <div>
                 <h1>관리자 모드</h1>
                 <Box className={styles.adminBox}>
-                            <TextField label="비밀번호" type="password" value={password} onChange={handlePasswordChange}></TextField>
-                            <Button variant="contained" color="primary" onClick={handleLoginClick} className={styles.adminLogin}>
-                                로그인
-                            </Button>
-                        </Box>
+                    <TextField label="비밀번호" type="password" value={password} onChange={handlePasswordChange}></TextField>
+                    <Button variant="contained" color="primary" onClick={handleLoginClick} className={styles.adminLogin}>
+                        로그인
+                    </Button>
+                </Box>
             </div>
         )
     }
 
     // 일반 페이지
     return (
-        
         <Card>
-            <CardActionArea onClick={() => props.history.push('/Selection')}>
+            <CardActionArea onClick={() => history.push('/Selection')}>
                 <Box className={[styles.root, styles.lightgreen]}>
                     <Box className={[styles.main, styles.center]}>
-                    <Button variant="contained" color="primary" onClick={handleAdminClick} className={styles.adminButton}>
-                            관리자 전환
+                        <Button variant="contained" color="primary" onClick={handleAdminClick} className={styles.adminButton}>
+                            관리자 전환 
                         </Button>
                         <Typography componet="h5" variant="h5" style={{ fontFamily: 'BMEULJIRO, sans-serif' }}>
                             환영합니다! <br />
@@ -64,9 +63,10 @@ export default function MainPage(props) {
                            <br /> 화면을 터치해주세요
                         </Typography>
                     </Box>
-                    
                 </Box>
             </CardActionArea>
         </Card>
     )
 }
+
+export default MainPage; // MainPage 컴포넌트를 한 번만 export

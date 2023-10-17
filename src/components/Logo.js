@@ -1,3 +1,4 @@
+/*
 import React from 'react'
 import { StylesProvider } from '@material-ui/core/styles';
 import {useStyles} from '../styles';
@@ -11,10 +12,11 @@ export default function Logo() {
         className={StylesProvider.largeLogo}
         style={{ 
             objectFit: 'contain', 
-            width: '25%', 
-            height: '60%',
+            width: '200%', 
+            height: '200%',
             margin: '10px 0px 0px -100px', 
         }} 
     ></img>
   )
 }
+*/

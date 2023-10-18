@@ -1,149 +1,65 @@
-import { Box, Card, CardContent, Fade, Typography, CardActionArea, CardMedia } from '@material-ui/core';
+// SelectionPage.js
 import React from 'react';
-import {useStyles} from '../styles';
+import { useHistory } from 'react-router-dom';
+import { Box, Typography, Card, CardActionArea, CardMedia, CardContent, Fade } from '@material-ui/core';
+import { useStyles } from '../styles';
 
 function SelectionPage() {
-    const styles = useStyles();
-    return (
-        <Fade in={true}>
-            <Box className={[styles.root, styles.navy]}>
-                <Box className={[styles.main, styles.center]}>
-                    <Typography variant="h3"
-                    component="h3" className={styles.center} style={{ fontFamily: 'BMEULJIRO, sans-serif' }} 
-                    gutterBottom
+  const styles = useStyles();
+  const history = useHistory();
+
+  const movies = [
+    { title: 'The Shawshank Redemption', image: 'path_to_image1' },
+    { title: 'The Godfather', image: 'path_to_image2' },
+    { title: 'The Dark Knight', image: 'path_to_image3' },
+    { title: 'Inception', image: 'path_to_image4' },
+    { title: 'The Matrix', image: 'path_to_image5' },
+    { title: 'Pulp Fiction', image: 'path_to_image6' },
+  ];
+
+  const handleMovieClick = (movieTitle) => {
+    // 클릭한 영화의 제목을 상태로 함께 넘겨줌
+    history.push({
+      pathname: '/MovieDetailsPage',
+      state: { movieTitle },
+    });
+  };
+
+  return (
+    <Fade in={true}>
+      <Box className={[styles.root, styles.navy]}>
+        <Box className={[styles.main, styles.center]}>
+          <Typography variant="h3" component="h3" className={styles.center} style={{ fontFamily: 'BMEULJIRO, sans-serif' }} gutterBottom>
+            영화를 선택해주세요
+          </Typography>
+          <Box className={styles.cards}>
+            {movies.map((movie, index) => (
+              <Card key={index} className={[styles.card, styles.space]} onClick={() => handleMovieClick(movie.title)}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    alt={movie.title}
+                    image={movie.image}
+                    className={styles.media}
+                  />
+                  <CardContent>
+                    <Typography
+                      gutterBottom
+                      variant="h4"
+                      color="textPrimary"
+                      component="p"
                     >
-                        영화를 선택해주세요
+                      {movie.title}
                     </Typography>
-                    <Box className={styles.cards}>
-                        <Box className={styles.row}>
-                            <Card className={[styles.card, styles.space]}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        alt="The Shawshank Redemption"
-                                        image=""
-                                        className={styles.media}
-                                    /> 
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h4"
-                                            color="textPrimary"
-                                            component="p"
-                                        >
-                                            The Shawshank Redemption
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                            <Card className={[styles.card, styles.space]}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        alt="The Godfather"
-                                        image=""
-                                        className={styles.media}
-                                    /> 
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h4"
-                                            color="textPrimary"
-                                            component="p"
-                                        >
-                                            The Godfather
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                            <Card className={[styles.card, styles.space]}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        alt="The Dark Knight"
-                                        image=""
-                                        className={styles.media}
-                                    /> 
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h4"
-                                            color="textPrimary"
-                                            component="p"
-                                        >
-                                            The Dark Knight
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                        </Box>
-                        <Box className={styles.row}>
-                            <Card className={[styles.card, styles.space]}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        alt="Inception"
-                                        image=""
-                                        className={styles.media}
-                                    /> 
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h4"
-                                            color="textPrimary"
-                                            component="p"
-                                        >
-                                            Inception
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                            <Card className={[styles.card, styles.space]}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        alt="The Matrix"
-                                        image=""
-                                        className={styles.media}
-                                    /> 
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h4"
-                                            color="textPrimary"
-                                            component="p"
-                                        >
-                                            The Matrix
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                            <Card className={[styles.card, styles.space]}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        alt="Pulp Fiction"
-                                        image=""
-                                        className={styles.media}
-                                    /> 
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h4"
-                                            color="textPrimary"
-                                            component="p"
-                                        >
-                                            Pulp Fiction
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                        </Box>
-                    </Box>
-                </Box>
-            </Box>
-        </Fade>
-    )
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </Fade>
+  );
 }
 
-export default SelectionPage; // SelectionPage 컴포넌트를 한 번만 export
+export default SelectionPage;

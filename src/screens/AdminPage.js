@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'; // useHistory를 import 합니다.
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, TextField, Button } from '@material-ui/core';
 
@@ -26,16 +26,17 @@ const useStyles = makeStyles((theme) => ({
 
 function AdminPage() {
   const classes = useStyles();
-  const history = useHistory();
+  const history = useHistory(); // useHistory hook을 사용하여 history 객체를 가져옵니다.
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    // Add your own admin username and password
     if (username === 'admin' && password === 'admin') {
-      history.push('/Admin');
+      history.push('/Admin'); // 로그인 성공 후 '/Admin' 경로로 이동합니다.
     } else {
-      window.confirm('아이디 혹은 비밀번호가 일치하지 않습니다.'); // window.confirm을 사용하여 알림을 표시합니다.
+      alert('Invalid credentials');
     }
   };
 
@@ -85,4 +86,4 @@ function AdminPage() {
   );
 }
 
-export default AdminPage;
+export default AdminPage; // AdminPage 컴포넌트를 한 번만 export

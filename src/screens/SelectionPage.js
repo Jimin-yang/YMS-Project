@@ -1,16 +1,9 @@
 import { Box, Card, CardContent, Fade, Typography, CardActionArea, CardMedia } from '@material-ui/core';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import {useStyles} from '../styles';
 
 function SelectionPage() {
     const styles = useStyles();
-    const history = useHistory();
-
-    const handleMovieClick = (movie) => {
-        history.push('/CinemaSeat', { movie: movie });
-    };
-
     return (
         <Fade in={true}>
             <Box className={[styles.root, styles.navy]}>
@@ -23,7 +16,7 @@ function SelectionPage() {
                     </Typography>
                     <Box className={styles.cards}>
                         <Box className={styles.row}>
-                            <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('The Shawshank Redemption')}>
+                            <Card className={[styles.card, styles.space]}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -43,7 +36,7 @@ function SelectionPage() {
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
-                            <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('The Godfather')}>
+                            <Card className={[styles.card, styles.space]}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -63,7 +56,7 @@ function SelectionPage() {
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
-                            <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('The Dark Knight')}>
+                            <Card className={[styles.card, styles.space]}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -85,7 +78,7 @@ function SelectionPage() {
                             </Card>
                         </Box>
                         <Box className={styles.row}>
-                            <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('Inception')}>
+                            <Card className={[styles.card, styles.space]}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -105,7 +98,7 @@ function SelectionPage() {
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
-                            <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('The Matrix')}>
+                            <Card className={[styles.card, styles.space]}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"
@@ -125,7 +118,7 @@ function SelectionPage() {
                                     </CardContent>
                                 </CardActionArea>
                             </Card>
-                            <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('Pulp Fiction')}>
+                            <Card className={[styles.card, styles.space]}>
                                 <CardActionArea>
                                     <CardMedia
                                         component="img"

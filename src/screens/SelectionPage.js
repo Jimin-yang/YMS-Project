@@ -1,12 +1,15 @@
 // SelectionPage.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Box, Typography, Card, CardActionArea, CardMedia, CardContent, Fade } from '@material-ui/core';
+import { Box, Typography, Card, CardActionArea, CardMedia, CardContent, Fade, IconButton } from '@material-ui/core';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useStyles } from '../styles';
 
 function SelectionPage() {
   const styles = useStyles();
   const history = useHistory();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const movies = [
     { title: 'The Shawshank Redemption', image: 'path_to_image1' },
@@ -18,22 +21,29 @@ function SelectionPage() {
   ];
 
   const handleMovieClick = (movieTitle) => {
-    // 클릭한 영화의 제목을 상태로 함께 넘겨줌
     history.push({
       pathname: '/MovieDetailsPage',
       state: { movieTitle },
     });
   };
 
+  const handleNextClick = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % movies.length);
+  };
+
+  const handlePrevClick = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + movies.length) % movies.length);
+  };
+
   return (
     <Fade in={true}>
       <Box className={[styles.root, styles.navy]}>
-        <Box className={[styles.main, styles.center]}>
-          <Typography variant="h3" component="h3" className={styles.center} style={{ fontFamily: 'BMEULJIRO, sans-serif' }} gutterBottom>
+        <Box className={styles.main}>
+          <Typography variant="h3" component="h3" style={{ fontFamily: 'BMEULJIRO, sans-serif' }} gutterBottom>
             영화를 선택해주세요
           </Typography>
-          <Box className={styles.cards}>
-            {movies.map((movie, index) => (
+          <Box className={styles.cardsContainer}>
+            {movies.slice(currentIndex, currentIndex + 3).map((movie, index) => (
               <Card key={index} className={[styles.card, styles.space]} onClick={() => handleMovieClick(movie.title)}>
                 <CardActionArea>
                   <CardMedia
@@ -56,6 +66,16 @@ function SelectionPage() {
               </Card>
             ))}
           </Box>
+          {movies.length > 3 && (
+            <>
+              <IconButton className={[styles.arrowButton, styles.nextButton]} onClick={handleNextClick}>
+                <ArrowForwardIcon />
+              </IconButton>
+              <IconButton className={[styles.arrowButton, styles.prevButton]} onClick={handlePrevClick}>
+                <ArrowBackIcon />
+              </IconButton>
+            </>
+          )}
         </Box>
       </Box>
     </Fade>

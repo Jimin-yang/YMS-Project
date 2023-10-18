@@ -1,3 +1,4 @@
+// styles.js
 import { makeStyles } from "@material-ui/core/styles";
 
 export const useStyles = makeStyles((theme) => ({
@@ -19,6 +20,7 @@ export const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         display: 'flex',
         color: '#ffffff',
+        position: 'relative', // 부모에 상대 위치 설정
     },
     center: {
         display: 'flex',
@@ -45,14 +47,30 @@ export const useStyles = makeStyles((theme) => ({
         src: "images/logo.png",
         fontSize: '20rem',
     },
-    cards: {
+    cardsContainer: {
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
-    },
-    card: { margin: 10},
+        justifyContent: 'center'
+      },
+    card: { margin: '10px 0'},
     space: {
         padding: 10,
     },
     media: { width: 200 },
-})) 
+    arrowButton: {
+        position: 'absolute',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        color: theme.palette.primary.main,
+        '&:hover': {
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+        },
+      },
+    nextButton: {
+        right: 0, // 버튼을 오른쪽으로 이동
+    },
+    prevButton: {
+        left: 0, // 버튼을 왼쪽으로 이동
+    },
+}));

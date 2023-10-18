@@ -5,6 +5,7 @@ import SelectionPage from "./screens/SelectionPage";
 import MainPage from "./screens/MainPage";
 import AdminPage from './screens/AdminPage';
 import Admin from './screens/Admin';
+import CinemaSeat from './screens/CinemaSeat'; // CinemaSeat.js를 import 합니다.
 
 const theme = createMuiTheme({
   typography: {
@@ -41,6 +42,7 @@ function App() {
               <Route path="/Selection" component={SelectionPage} />
               <Route path="/AdminPage" component={AdminPage} />
               <Route path="/Admin" component={Admin} />
+              <Route path="/CinemaSeat" component={CinemaSeat} /> {/* CinemaSeat.js 페이지를 라우터에 추가합니다. */}
             </Switch>
           </Router>
         </Paper>

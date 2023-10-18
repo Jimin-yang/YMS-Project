@@ -45,7 +45,7 @@ export const useStyles = makeStyles((theme) => ({
     },
     appIcon: {
         src: "images/logo.png",
-        fontSize: '20rem',
+        fontSize: '10rem',
     },
     cardsContainer: {
         display: 'flex',

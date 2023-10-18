@@ -1,4 +1,3 @@
-// SelectionPage.js
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box, Typography, Card, CardActionArea, CardMedia, CardContent, Fade } from '@material-ui/core';
@@ -18,7 +17,6 @@ function SelectionPage() {
   ];
 
   const handleMovieClick = (movieTitle) => {
-    // 클릭한 영화의 제목을 상태로 함께 넘겨줌
     history.push({
       pathname: '/MovieDetailsPage',
       state: { movieTitle },
@@ -29,7 +27,7 @@ function SelectionPage() {
     <Fade in={true}>
       <Box className={[styles.root, styles.navy]}>
         <Box className={[styles.main, styles.center]}>
-          <Typography variant="h3" component="h3" className={styles.center} style={{ fontFamily: 'BMEULJIRO, sans-serif' }} gutterBottom>
+          <Typography variant="h3" component="h3" className={styles.center} style={{ fontFamily: 'BMEULJIRO, sans-serif', marginBottom: '50px' }} gutterBottom>
             영화를 선택해주세요
           </Typography>
           <Box className={styles.cards}>

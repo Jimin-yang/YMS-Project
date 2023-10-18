@@ -1,4 +1,3 @@
-// MovieDetailsPage.js
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
@@ -20,6 +19,7 @@ function MovieDetailsPage() {
 
   const handleNextClick = () => {
     alert(`영화: ${history.location.state.movieTitle}\n상영관: ${selectedTheater}\n상영시간: ${selectedTime}`);
+    history.push('/CinemaSeat'); // 확인 버튼을 누르면 '/CinemaSeat' 경로로 이동합니다.
   };
 
   return (

@@ -1,4 +1,3 @@
-// Admin.js
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Box, Button } from '@material-ui/core';

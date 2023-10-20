@@ -1,4 +1,6 @@
+// Admin.js
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Box, Button } from '@material-ui/core';
 
@@ -25,20 +27,28 @@ const useStyles = makeStyles((theme) => ({
 
 function Admin() {
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleAddClick = () => {
+    history.push({
+      pathname: '/Selection',
+      state: { isAdmin: true },
+    });
+  };
 
   return (
     <Container className={classes.root}>
       <Typography variant="h2" className={classes.title}>
-        Admin Page
+        관리자 페이지
       </Typography>
       <Box className={classes.content}>
         <Typography variant="body1">
           Welcome to the admin page. You can manage your application here.
         </Typography>
-        <Button variant="contained" color="primary" className={classes.button}>
+        <Button variant="contained" color="secondary" className={classes.button} onClick={handleAddClick}> {}
           추가
         </Button>
-        <Button variant="contained" color="secondary" className={classes.button}>
+        <Button variant="contained" color="primary" className={classes.button}> {}
           삭제
         </Button>
       </Box>

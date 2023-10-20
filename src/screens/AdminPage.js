@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom'; // useHistory를 import 합니다.
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, TextField, Button } from '@material-ui/core';
 
@@ -79,7 +79,7 @@ function AdminPage() {
           color="primary"
           className={classes.submit}
         >
-          Sign In
+          로그인
         </Button>
       </form>
     </Container>

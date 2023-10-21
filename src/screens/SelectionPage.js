@@ -1,3 +1,4 @@
+// SelectionPage.js
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Box, Typography, Card, CardActionArea, CardMedia, CardContent, Fade, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
@@ -11,22 +12,23 @@ function SelectionPage() {
   const isDeleting = location.state?.isDeleting;
   const [password, setPassword] = useState('');
   const correctPassword = 'admin123';
-  const [openAdd, setOpenAdd] = useState(false); // '추가' 팝업 창의 열림/닫힘 상태를 관리하는 상태
-  const [openDelete, setOpenDelete] = useState(false); // '삭제' 팝업 창의 열림/닫힘 상태를 관리하는 상태
-  const [newMovieTitle, setNewMovieTitle] = useState(''); // 새 영화 제목을 관리하는 상태
-  const [newMovieImage, setNewMovieImage] = useState(''); // 새 영화 이미지 URL을 관리하는 상태
-  const [selectedMovie, setSelectedMovie] = useState(null); // 선택한 영화를 관리하는 상태
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [newMovieTitle, setNewMovieTitle] = useState('');
+  const [newMovieImage, setNewMovieImage] = useState('');
+  const [newMovieTheater, setNewMovieTheater] = useState('');
+  const [newMovieTime, setNewMovieTime] = useState('');
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-  const [movies, setMovies] = useState([ // movies 배열을 상태로 관리합니다.
-    { title: 'The Shawshank Redemption', image: 'path_to_image1' },
-    { title: 'The Godfather', image: 'path_to_image2' },
-    { title: 'The Dark Knight', image: 'path_to_image3' },
-    { title: 'Inception', image: 'path_to_image4' },
-    { title: 'The Matrix', image: 'path_to_image5' },
-    { title: 'Pulp Fiction', image: 'path_to_image6' },
+  const [movies, setMovies] = useState([
+    { title: 'The Shawshank Redemption', image: 'path_to_image1', theater: 'Theater 1', time: '12:00' },
+    { title: 'The Godfather', image: 'path_to_image2', theater: 'Theater 2', time: '15:00' },
+    { title: 'The Dark Knight', image: 'path_to_image3', theater: 'Theater 3', time: '18:00' },
+    { title: 'Inception', image: 'path_to_image4', theater: 'Theater 4', time: '21:00' },
+    { title: 'The Matrix', image: 'path_to_image5', theater: 'Theater 5', time: '24:00' },
+    { title: 'Pulp Fiction', image: 'path_to_image6', theater: 'Theater 6', time: '03:00' },
   ]);
 
-  // 페이지가 로드될 때 localStorage에서 영화 목록을 불러옵니다.
   useEffect(() => {
     const storedMovies = localStorage.getItem('movies');
     if (storedMovies) {
@@ -37,18 +39,21 @@ function SelectionPage() {
   const handleMovieClick = (movieTitle) => {
     if (movieTitle === '새 영화 추가') {
       if (!isDeleting) {
-        setOpenAdd(true); // '새 영화 추가' 버튼을 클릭하면 '추가' 팝업 창을 엽니다.
+        setOpenAdd(true);
       }
-    } else if (!isAdmin || isDeleting) { // 관리자가 아닐 때만 다른 영화 선택이 가능합니다.
-      if (isDeleting) {
-        setSelectedMovie(movieTitle);
-        setOpenDelete(true);
-      } else {
-        history.push({
-          pathname: '/MovieDetailsPage',
-          state: { movieTitle },
-        });
-      }
+    } else if (isAdmin) {
+      history.push({
+        pathname: '/MovieDetailsPage',
+        state: { movieTitle, isAdmin: true },
+      });
+    } else if (isDeleting) {
+      setSelectedMovie(movieTitle);
+      setOpenDelete(true);
+    } else {
+      history.push({
+        pathname: '/MovieDetailsPage',
+        state: { movieTitle },
+      });
     }
   };
 
@@ -70,37 +75,45 @@ function SelectionPage() {
   }
 
   const handleCloseAdd = () => {
-    setOpenAdd(false); // '닫기' 버튼을 클릭하면 '추가' 팝업 창을 닫습니다.
+    setOpenAdd(false);
   };
 
   const handleCloseDelete = () => {
-    setOpenDelete(false); // '닫기' 버튼을 클릭하면 '삭제' 팝업 창을 닫습니다.
+    setOpenDelete(false);
   };
 
   const handleConfirmClick = () => {
-    history.push('/'); // 첫 페이지로 이동합니다.
+    history.push('/');
   };
 
   const handleNewMovieTitleChange = (event) => {
-    setNewMovieTitle(event.target.value); // 입력한 새 영화 제목을 상태에 저장합니다.
+    setNewMovieTitle(event.target.value);
   };
 
   const handleNewMovieImageChange = (event) => {
-    setNewMovieImage(event.target.value); // 입력한 새 영화 이미지 URL을 상태에 저장합니다.
+    setNewMovieImage(event.target.value);
+  };
+
+  const handleNewMovieTheaterChange = (event) => {
+    setNewMovieTheater(event.target.value);
+  };
+
+  const handleNewMovieTimeChange = (event) => {
+    setNewMovieTime(event.target.value);
   };
 
   const handleAddClick = () => {
-    const newMovies = [...movies, { title: newMovieTitle, image: newMovieImage }];
-    setMovies(newMovies); // 입력한 새 영화 정보를 movies 배열에 추가합니다.
-    localStorage.setItem('movies', JSON.stringify(newMovies)); // 영화 목록을 localStorage에 저장합니다.
-    setOpenAdd(false); // '추가' 버튼을 클릭하면 '추가' 팝업 창을 닫습니다.
+    const newMovies = [...movies, { title: newMovieTitle, image: newMovieImage, theater: newMovieTheater, time: newMovieTime }];
+    setMovies(newMovies);
+    localStorage.setItem('movies', JSON.stringify(newMovies));
+    setOpenAdd(false);
   };
 
   const handleDeleteClick = () => {
     const newMovies = movies.filter(movie => movie.title !== selectedMovie);
-    setMovies(newMovies); // 선택한 영화를 movies 배열에서 삭제합니다.
-    localStorage.setItem('movies', JSON.stringify(newMovies)); // 영화 목록을 localStorage에 저장합니다.
-    setOpenDelete(false); // '예' 버튼을 클릭하면 '삭제' 팝업 창을 닫습니다.
+    setMovies(newMovies);
+    localStorage.setItem('movies', JSON.stringify(newMovies));
+    setOpenDelete(false);
   };
 
   return (
@@ -148,7 +161,6 @@ function SelectionPage() {
               <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('새 영화 추가')}>
                 <CardActionArea>
                   <Box className={styles.media} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {/* '(+)'를 삭제합니다. */}
                   </Box>
                   <CardContent>
                     <Typography
@@ -164,12 +176,13 @@ function SelectionPage() {
               </Card>
             )}
           </Box>
-          {/* '추가' 팝업 창 */}
           <Dialog open={openAdd} onClose={handleCloseAdd}>
             <DialogTitle>새 영화 추가</DialogTitle>
             <DialogContent>
               <TextField autoFocus margin="dense" label="영화 제목" fullWidth onChange={handleNewMovieTitleChange} />
               <TextField margin="dense" label="영화 이미지 URL" fullWidth onChange={handleNewMovieImageChange} />
+              <TextField margin="dense" label="상영관" fullWidth onChange={handleNewMovieTheaterChange} />
+              <TextField margin="dense" label="상영시간" fullWidth onChange={handleNewMovieTimeChange} />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseAdd} color="primary">
@@ -180,25 +193,9 @@ function SelectionPage() {
               </Button>
             </DialogActions>
           </Dialog>
-          {/* '삭제' 팝업 창 */}
-          <Dialog open={openDelete} onClose={handleCloseDelete}>
-            <DialogTitle>영화 삭제</DialogTitle>
-            <DialogContent>
-              {selectedMovie}를 삭제하시겠습니까?
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDelete} color="primary">
-                아니오
-              </Button>
-              <Button onClick={handleDeleteClick} color="primary">
-                예
-              </Button>
-            </DialogActions>
-          </Dialog>
         </Box>
       </Box>
     </Fade>
   );
 }
-
 export default SelectionPage;

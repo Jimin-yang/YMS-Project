@@ -1,3 +1,4 @@
+// App.js
 import React from 'react';
 import { Container, CssBaseline, Paper, ThemeProvider, createMuiTheme } from "@material-ui/core";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -6,7 +7,7 @@ import MainPage from "./screens/MainPage";
 import AdminPage from './screens/AdminPage';
 import Admin from './screens/Admin';
 import MovieDetailsPage from './screens/MovieDetailsPage';
-import CinemaSeat from './screens/CinemaSeat'; // CinemaSeat.js를 import 합니다.
+import CinemaSeat from './screens/CinemaSeat';
 import { useStyles } from './styles';
 
 const theme = createMuiTheme({
@@ -45,7 +46,8 @@ function App() {
               <Route path="/AdminPage" component={AdminPage} />
               <Route path="/Admin" component={Admin} />
               <Route path="/MovieDetailsPage" component={MovieDetailsPage} />
-              <Route path="/CinemaSeat" component={CinemaSeat} /> {/* CinemaSeat.js를 실행하는 Route를 추가합니다. */}
+              <Route path="/CinemaSeat" component={CinemaSeat} />
+              <Route path="/SelectionPage" component={SelectionPage} /> {/* SelectionPage.js를 실행하는 Route를 추가합니다. */}
             </Switch>
           </Router>
         </Paper>

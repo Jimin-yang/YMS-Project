@@ -45,6 +45,7 @@ function CinemaSeat() {
     const handleConfirmClick = () => {
         console.log('선택된 좌석:', selectedSeats);
         console.log('선택된 인원:', selectedCount); // 선택한 인원 수를 출력합니다.
+        history.push('/PaymentPage'); // PaymentPage 컴포넌트로 이동합니다.
     };
 
     const handleBackClick = () => {

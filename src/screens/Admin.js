@@ -1,4 +1,3 @@
-// Admin.js
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,7 +31,14 @@ function Admin() {
   const handleAddClick = () => {
     history.push({
       pathname: '/Selection',
-      state: { isAdmin: true },
+      state: { isAdmin: true, isDeleting: false },
+    });
+  };
+
+  const handleDeleteClick = () => {
+    history.push({
+      pathname: '/Selection',
+      state: { isAdmin: true, isDeleting: true },
     });
   };
 
@@ -45,15 +51,14 @@ function Admin() {
         <Typography variant="body1">
           Welcome to the admin page. You can manage your application here.
         </Typography>
-        <Button variant="contained" color="secondary" className={classes.button} onClick={handleAddClick}> {}
+        <Button variant="contained" color="secondary" className={classes.button} onClick={handleAddClick}>
           추가
         </Button>
-        <Button variant="contained" color="primary" className={classes.button}> {}
+        <Button variant="contained" color="primary" className={classes.button} onClick={handleDeleteClick}>
           삭제
         </Button>
       </Box>
     </Container>
   );
 }
-
 export default Admin;

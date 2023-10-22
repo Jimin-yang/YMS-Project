@@ -30,14 +30,15 @@ function PaymentPage() {
   const [expirationDate, setExpirationDate] = useState('');
   const [securityCode, setSecurityCode] = useState('');
 
-  const handlePayment = () => {
-    // 결제 처리 로직을 작성
+  const handlePayment = async () => {
     console.log(`Card Number: ${cardNumber}`);
     console.log(`Expiration Date: ${expirationDate}`);
     console.log(`Security Code: ${securityCode}`);
+    
+    // TODO: 부트페이 결제 코드를 추가
 
     // 결제가 완료되면 예매 완료 페이지로 이동
-    history.push('/complete');
+    history.push('/CompletePage');
   };
 
   return (

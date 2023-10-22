@@ -1,4 +1,3 @@
-// MovieDetailsPage.js
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Box, Typography, Button, FormControlLabel, Radio, Checkbox } from '@material-ui/core';
@@ -9,7 +8,8 @@ function MovieDetailsPage() {
   const history = useHistory();
   const location = useLocation();
   const isAdmin = location.state?.isAdmin;
-  const movieTitle = history.location.state.movieTitle;
+  const movieTitle = location.state?.movieTitle || 'Unknown Movie';
+
 
   const initialMovies = [
     { title: 'The Godfather', image: 'path_to_image1', theater: ['상영관1'], time: ['10:00'] },
@@ -33,7 +33,7 @@ function MovieDetailsPage() {
   const [movie, setMovie] = useState(null);
   const [selectedTheaters, setSelectedTheaters] = useState([]);
   const [selectedTime, setSelectedTime] = useState([]);
-    const [theaters, setTheaters] = useState(['상영관1', '상영관2', '상영관3']);
+  const [theaters, setTheaters] = useState(['상영관1', '상영관2', '상영관3']);
   const [times, setTimes] = useState(['08:00', '11:00', '14:00', '17:00', '20:00', '23:00']);
 
   useEffect(() => {
@@ -65,27 +65,24 @@ function MovieDetailsPage() {
 
   const handleTheaterChange = (event) => {
     if (isAdmin) {
-      if (event.target.checked) {
-        setSelectedTheaters(prev => [...prev, event.target.value]);
-      } else {
-        setSelectedTheaters(prev => prev.filter(theater => theater !== event.target.value));
-      }
+      setSelectedTheaters((prev) =>
+        event.target.checked ? [...prev, event.target.value] : prev.filter((theater) => theater !== event.target.value)
+      );
     } else {
       setSelectedTheaters([event.target.value]);
     }
   };
-
+  
   const handleTimeChange = (event) => {
     if (isAdmin) {
-      if (event.target.checked) {
-        setSelectedTime(prev => [...prev, event.target.value]);
-      } else {
-        setSelectedTime(prev => prev.filter(time => time !== event.target.value));
-      }
+      setSelectedTime((prev) =>
+        event.target.checked ? [...prev, event.target.value] : prev.filter((time) => time !== event.target.value)
+      );
     } else {
       setSelectedTime([event.target.value]);
     }
   };
+  
 
   const handleUpdateClick = () => {
     const newMovies = movies.map(movie => movie.title === movieTitle ? { ...movie, theater: selectedTheaters, time: selectedTime } : movie);
@@ -94,6 +91,7 @@ function MovieDetailsPage() {
     alert('상영관과 상영시간이 수정되었습니다.');
     history.goBack();
   };
+
   const handleConfirmClick = () => {
     alert(`영화: ${movieTitle}\n상영관: ${selectedTheaters.join(', ')}\n상영시간: ${selectedTime.join(', ')}`);
     history.push('/CinemaSeat', { theater: selectedTheaters[0], seats: theaterSeats[selectedTheaters[0]] });
@@ -105,7 +103,7 @@ function MovieDetailsPage() {
         영화 상세 정보
       </Typography>
       <Typography variant="h4" component="h4" className={`${styles.center} ${styles.navy}`} gutterBottom>
-        {history.location.state.movieTitle}
+        {movieTitle}
       </Typography>
       <Typography variant="h6" component="h6" className={`${styles.center} ${styles.navy}`} gutterBottom>
         상영관 선택

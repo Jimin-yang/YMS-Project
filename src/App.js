@@ -8,6 +8,7 @@ import Admin from './screens/Admin';
 import MovieDetailsPage from './screens/MovieDetailsPage';
 import CinemaSeat from './screens/CinemaSeat';
 import PaymentPage from './screens/PaymentPage'; // PaymentPage 컴포넌트를 import 합니다.
+import CompletePage from './screens/CompletePage'; // CompletePage 컴포넌트를 import 합니다.
 import { useStyles } from './styles';
 
 const theme = createMuiTheme({
@@ -49,6 +50,7 @@ function App() {
               <Route path="/CinemaSeat" component={CinemaSeat} />
               <Route path="/SelectionPage" component={SelectionPage} />
               <Route path="/PaymentPage" component={PaymentPage} /> {/* PaymentPage 컴포넌트를 실행하는 Route를 추가합니다. */}
+              <Route path="/CompletePage" component={CompletePage} />
             </Switch>
           </Router>
         </Paper>

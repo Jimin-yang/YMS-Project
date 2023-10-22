@@ -22,11 +22,18 @@ function MovieDetailsPage() {
   const allTheaters = ['상영관1', '상영관2', '상영관3'];
   const allTimes = ['08:00', '11:00', '14:00', '17:00', '20:00', '23:00'];
 
+  // 상영관별 좌석 수 정보
+  const theaterSeats = {
+    '상영관1': 15,
+    '상영관2': 20,
+    '상영관3': 25,
+  };
+
   const [movies, setMovies] = useState([]);
   const [movie, setMovie] = useState(null);
   const [selectedTheaters, setSelectedTheaters] = useState([]);
   const [selectedTime, setSelectedTime] = useState([]);
-  const [theaters, setTheaters] = useState(['상영관1', '상영관2', '상영관3']);
+    const [theaters, setTheaters] = useState(['상영관1', '상영관2', '상영관3']);
   const [times, setTimes] = useState(['08:00', '11:00', '14:00', '17:00', '20:00', '23:00']);
 
   useEffect(() => {
@@ -87,10 +94,9 @@ function MovieDetailsPage() {
     alert('상영관과 상영시간이 수정되었습니다.');
     history.goBack();
   };
-
   const handleConfirmClick = () => {
     alert(`영화: ${movieTitle}\n상영관: ${selectedTheaters.join(', ')}\n상영시간: ${selectedTime.join(', ')}`);
-    history.push('/CinemaSeat');
+    history.push('/CinemaSeat', { theater: selectedTheaters[0], seats: theaterSeats[selectedTheaters[0]] });
   };
 
   return (

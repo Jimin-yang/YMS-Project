@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 // CinemaSeat.js
-import React, { useState } from 'react';
-import { Button, Grid, Box } from '@material-ui/core';
-=======
 import React, { useState, useEffect } from 'react';
 import { Button, Grid, Box, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
->>>>>>> 95f4d19b3ceb3099d1e3684aaaaad7f455bbef38
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -33,50 +28,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-<<<<<<< HEAD
-function CinemaSeat() {
+const CinemaSeat = () => {
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
   const totalSeats = location.state && location.state.seats ? location.state.seats : 20;
   const [selectedSeats, setSelectedSeats] = useState([]);
-=======
-const CinemaSeat = () => {
-  const classes = useStyles();
-  const history = useHistory();
-  const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedCount, setSelectedCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [seatTypes, setSeatTypes] = useState([]); // 좌석 유형을 저장하는 배열을 추가합니다.
->>>>>>> 95f4d19b3ceb3099d1e3684aaaaad7f455bbef38
 
   const handleSeatClick = (seat) => {
     const index = selectedSeats.indexOf(seat);
     if (index > -1) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seat));
-<<<<<<< HEAD
-    } else {
-      setSelectedSeats([...selectedSeats, seat]);
-=======
       setSelectedCount(selectedCount - 1);
     } else {
       setSelectedSeats([...selectedSeats, seat]);
       setSelectedCount(selectedCount + 1);
       setSeatTypes((prevSeatTypes) => [...prevSeatTypes, { seat, type: 'adult' }]);
->>>>>>> 95f4d19b3ceb3099d1e3684aaaaad7f455bbef38
     }
   };
 
   const handleConfirmClick = () => {
     console.log('선택된 좌석:', selectedSeats);
-<<<<<<< HEAD
-    history.goBack();
-  };
-
-  const handleBackClick = () => {
-    history.goBack();
-  };
-=======
     console.log('좌석 별 유형:', seatTypes);
     setOpen(true);
   };
@@ -100,16 +75,11 @@ const CinemaSeat = () => {
     setSeatTypes(selectedSeats.map((seat) => ({ seat, type: 'adult' })));
   }, [selectedSeats]);
 
->>>>>>> 95f4d19b3ceb3099d1e3684aaaaad7f455bbef38
   return (
     <Box className={classes.root}>
       <h1>좌석 선택</h1>
       <Grid container justifyContent="center" spacing={3}>
-<<<<<<< HEAD
         {[...Array(Math.ceil(totalSeats / seatsPerRow))].map((_, rowIndex) => (
-=======
-        {[...Array(totalSeats / seatsPerRow)].map((_, rowIndex) => (
->>>>>>> 95f4d19b3ceb3099d1e3684aaaaad7f455bbef38
           <Grid container item key={rowIndex} justifyContent="center" spacing={3}>
             {[...Array(seatsPerRow)].map((_, colIndex) => {
               const seatNumber = rowIndex * seatsPerRow + colIndex;
@@ -137,12 +107,6 @@ const CinemaSeat = () => {
           돌아가기
         </Button>
       </Box>
-<<<<<<< HEAD
-    </Box>
-  );
-}
-=======
-
       {/* 팝업 창 */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>팝업 창</DialogTitle>
@@ -176,7 +140,5 @@ const CinemaSeat = () => {
     </Box>
   );
 };
->>>>>>> 95f4d19b3ceb3099d1e3684aaaaad7f455bbef38
 
 export default CinemaSeat;
-   

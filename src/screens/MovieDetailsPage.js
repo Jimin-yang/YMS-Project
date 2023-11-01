@@ -24,9 +24,9 @@ function MovieDetailsPage() {
 
   // 상영관별 좌석 수 정보
   const theaterSeats = {
-    '상영관1': 15,
-    '상영관2': 20,
-    '상영관3': 25,
+    '상영관1': 20,
+    '상영관2': 30,
+    '상영관3': 40,
   };
 
   const [movies, setMovies] = useState([]);

@@ -1,10 +1,9 @@
-// CinemaSeat.js
 import React, { useState, useEffect } from 'react';
 import { Button, Grid, Box, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useLocation } from 'react-router-dom';
 
-const seatsPerRow = 5;
+const seatsPerRow = 10;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,15 +15,25 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '100vh',
   },
   seat: {
-    padding: theme.spacing(1),
+    padding: 0, // 버튼 패딩을 0으로 변경
     textAlign: 'center',
     color: theme.palette.text.secondary,
+    flexGrow: 1,
+    minWidth: '35px', // 버튼 최소 너비를 35px로 변경
+    width: '35px', // 버튼 너비를 35px로 고정
+    height: '44px', // 버튼 높이를 44px로 고정
+    fontSize: '16px',
   },
   buttonContainer: {
     marginTop: theme.spacing(10),
   },
   formControl: {
     minWidth: 120,
+  },
+  '@global': {
+    '.MuiGrid-spacing-xs-3 > .MuiGrid-item': {
+      padding: '11px',
+    },
   },
 }));
 
@@ -36,13 +45,17 @@ const CinemaSeat = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedCount, setSelectedCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [seatTypes, setSeatTypes] = useState([]); // 좌석 유형을 저장하는 배열을 추가합니다.
+  const [seatTypes, setSeatTypes] = useState([]);
+  const movieTitle = location.state?.movieTitle || 'Unknown Movie';
+  const theater = location.state?.theater || 'Unknown Theater';
+  const time = location.state?.time || 'Unknown Time';
 
   const handleSeatClick = (seat) => {
     const index = selectedSeats.indexOf(seat);
     if (index > -1) {
       setSelectedSeats(selectedSeats.filter((s) => s !== seat));
       setSelectedCount(selectedCount - 1);
+      setSeatTypes((prevSeatTypes) => prevSeatTypes.filter((st) => st.seat !== seat));
     } else {
       setSelectedSeats([...selectedSeats, seat]);
       setSelectedCount(selectedCount + 1);
@@ -52,14 +65,13 @@ const CinemaSeat = () => {
 
   const handleConfirmClick = () => {
     console.log('선택된 좌석:', selectedSeats);
-    console.log('좌석 별 유형:', seatTypes);
     setOpen(true);
   };
-
+  
   const handleBackClick = () => {
     history.push('/Selection');
   };
-
+  
   const handleClose = () => {
     setOpen(false);
     // 선택된 seatTypes에 따라 다른 페이지로 이동합니다.
@@ -70,11 +82,12 @@ const CinemaSeat = () => {
     });
     history.push('/PaymentPage'); // 기본적으로 PaymentPage로 이동합니다.
   };
+  
   useEffect(() => {
     // selectedSeats가 변경된 후에 seatTypes를 업데이트합니다.
     setSeatTypes(selectedSeats.map((seat) => ({ seat, type: 'adult' })));
   }, [selectedSeats]);
-
+  
   return (
     <Box className={classes.root}>
       <h1>좌석 선택</h1>
@@ -98,35 +111,36 @@ const CinemaSeat = () => {
             })}
           </Grid>
         ))}
-      </Grid>
-      <Box className={classes.buttonContainer}>
-        <Button variant="contained" color="primary" onClick={handleConfirmClick}>
-          확인
-        </Button>
-        <Button variant="contained" color="secondary" onClick={handleBackClick} style={{ marginLeft: '10px' }}>
-          돌아가기
-        </Button>
-      </Box>
-      {/* 팝업 창 */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>팝업 창</DialogTitle>
-        <DialogContent>
-        <p>선택된 좌석: {selectedSeats.map(seat => seat + 1).join(', ')}</p>
-
-          {seatTypes.map(({ seat, type }) => (
-            <FormControl key={seat} className={classes.formControl}>
-              <InputLabel id={`seat-type-label-${seat + 1}`}>{`좌석 ${seat + 1} 유형 선택`}</InputLabel>
-              <Select
-                labelId={`seat-type-label-${seat+1}`}
-                id={`seat-type-select-${seat+1}`}
-                value={type}
-                onChange={(e) => {
-                  setSeatTypes(seatTypes.map((st) => (st.seat === seat ? { ...st, type: e.target.value } : st)));
-                }}
-              >
-                <MenuItem value="adult">성인</MenuItem>
-                <MenuItem value="senior">노약자</MenuItem>
-                <MenuItem value="child">어린이</MenuItem>
+  
+        <Box className={classes.buttonContainer}>
+          <Button variant="contained" color="primary" onClick={handleConfirmClick}>
+            확인
+          </Button>
+          <Button variant="contained" color="secondary" onClick={handleBackClick} style={{ marginLeft: '10px' }}>
+            돌아가기
+          </Button>
+        </Box>
+  
+        {/* 팝업 창 */}
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>팝업 창</DialogTitle>
+          <DialogContent>
+            <p>선택된 좌석: {selectedSeats.map(seat => seat + 1).join(', ')}</p>
+  
+            {seatTypes.map(({ seat, type }) => (
+              <FormControl key={seat} className={classes.formControl}>
+                <InputLabel id={`seat-type-label-${seat + 1}`}>{`좌석 ${seat + 1} 유형 선택`}</InputLabel>
+                <Select
+                  labelId={`seat-type-label-${seat+1}`}
+                  id={`seat-type-select-${seat+1}`}
+                  value={type}
+                  onChange={(e) => {
+                    setSeatTypes(seatTypes.map((st) => (st.seat === seat ? { ...st, type: e.target.value } : st)));
+                  }}
+                >
+                  <MenuItem value="adult">성인</MenuItem>
+                  <MenuItem value="senior">노약자</MenuItem>
+                  <MenuItem value="child">어린이</MenuItem>
               </Select>
             </FormControl>
           ))}
@@ -137,8 +151,9 @@ const CinemaSeat = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
-  );
+    </Grid>
+  </Box>
+);
 };
 
 export default CinemaSeat;

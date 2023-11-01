@@ -79,11 +79,11 @@ function Admin() {
   const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
 
   const handleNextClick = () => {
-    setCurrentMovieIndex((prevIndex) => (prevIndex + 1) % movies.length);
+    setCurrentMovieIndex((prevIndex) => (prevIndex + 4) % movies.length);
   };
 
   const handlePrevClick = () => {
-    setCurrentMovieIndex((prevIndex) => (prevIndex - 1 + movies.length) % movies.length);
+    setCurrentMovieIndex((prevIndex) => (prevIndex - 4 + movies.length) % movies.length);
   };
 
   const displayMovies = [

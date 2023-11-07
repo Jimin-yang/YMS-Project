@@ -119,7 +119,7 @@ function SelectionPage() {
   return (
     <Fade in={true}>
       <Box className={[styles.root, styles.navy]} style={{ position: 'relative' }}>
-        <Box className={[styles.main, styles.center]}>
+        <Box className={[styles.main, styles.center, styles.initialCenter]}>  
           <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
             {isAdmin ? (
               <Button variant="contained" color="primary" onClick={handleConfirmClick} className={styles.adminButton} style={{ width: '150px', fontSize: '1rem' }}>

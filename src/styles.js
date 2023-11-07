@@ -1,6 +1,10 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 export const useStyles = makeStyles((theme) => ({
+    initialCenter: {
+        transform: 'translateX(calc(50% + 50px))', // 이 값은 조절해보세요
+    },
+      
     root: {
         height: '100vh',
         display: 'flex',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Typography, TextField, Button } from '@material-ui/core';
+import { Container, Typography, Button, Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,78 +12,122 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     backgroundColor: '#f5f5f5',
   },
-  title: {
-    marginBottom: theme.spacing(4),
+  buttonContainer: {
+    marginBottom: theme.spacing(2),
   },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
+  button: {
+    margin: theme.spacing(1),
+    width: theme.spacing(8),
+    height: theme.spacing(8),
+    borderRadius: '50%',
   },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
+  errorMessage: {
+    color: 'red',
+    marginTop: theme.spacing(2),
   },
 }));
 
 function AdminPage() {
   const classes = useStyles();
-  const history = useHistory(); // useHistory hook을 사용하여 history 객체를 가져옵니다.
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const history = useHistory();
+  const [pin, setPin] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Add your own admin username and password
-    if (username === 'admin' && password === 'admin') {
-      history.push('/Admin'); // 로그인 성공 후 '/Admin' 경로로 이동합니다.
+  const handlePinInput = (input) => {
+    if (input === 'DEL') {
+      if (pin === '') {
+        history.push('/');
+      } else {
+        setPin(pin.slice(0, -1));
+      }
+    } else if (input === 'CONFIRM') {
+      if (pin === '4789') {
+        history.push('/Admin');
+      } else {
+        setErrorMessage('비밀번호가 일치하지 않습니다.');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
+        setPin('');
+      }
     } else {
-      alert('Invalid credentials');
+      setPin(pin + input);
     }
   };
 
   return (
     <Container className={classes.root}>
-      <Typography variant="h2" className={classes.title}>
-        Admin Login
-      </Typography>
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          id="username"
-          label="Username"
-          name="username"
-          autoComplete="username"
-          autoFocus
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <TextField
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          className={classes.submit}
-        >
-          로그인
-        </Button>
-      </form>
+      <Typography variant="h2">Admin Login</Typography>
+      <Grid container direction="column" className={classes.buttonContainer}>
+        <Grid item container justify="center">
+          {[1, 2, 3].map((num) => (
+            <Button
+              key={num}
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={() => handlePinInput(num.toString())}
+            >
+              {num}
+            </Button>
+          ))}
+        </Grid>
+        <Grid item container justify="center">
+          {[4, 5, 6].map((num) => (
+            <Button
+              key={num}
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={() => handlePinInput(num.toString())}
+            >
+              {num}
+            </Button>
+          ))}
+        </Grid>
+        <Grid item container justify="center">
+          {[7, 8, 9].map((num) => (
+            <Button
+              key={num}
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={() => handlePinInput(num.toString())}
+            >
+              {num}
+            </Button>
+          ))}
+        </Grid>
+        <Grid item container justify="center">
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.button}
+            onClick={() => handlePinInput('DEL')}
+          >
+            ◀
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => handlePinInput('0')}
+          >
+            0
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            onClick={() => handlePinInput('CONFIRM')}
+          >
+            확인
+          </Button>
+        </Grid>
+      </Grid>
+      {errorMessage && <Typography className={classes.errorMessage}>{errorMessage}</Typography>}
     </Container>
   );
 }
 
-export default AdminPage; // AdminPage 컴포넌트를 한 번만 export
+export default AdminPage;

@@ -1,82 +1,109 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Box, Typography, TextField, Button } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect, useState } from 'react';
+import { Button, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    marginBottom: theme.spacing(4),
-  },
-  input: {
-    marginBottom: theme.spacing(2),
-  },
-  button: {
-    marginTop: theme.spacing(2),
-  },
-}));
+const PaymentPage = ({ location }) => {
+  const {
+    movieTitle,
+    theater,
+    time,
+    selectedSeats,
+    childCount,
+    adultCount,
+  } = location.state || {};
 
-function PaymentPage() {
-  const classes = useStyles();
-  const history = useHistory();
-  const [cardNumber, setCardNumber] = useState('');
-  const [expirationDate, setExpirationDate] = useState('');
-  const [securityCode, setSecurityCode] = useState('');
+  // 가격 정보
+  const childPrice = 8000;
+  const adultPrice = 10000;
 
-  const handlePayment = async () => {
-    console.log(`Card Number: ${cardNumber}`);
-    console.log(`Expiration Date: ${expirationDate}`);
-    console.log(`Security Code: ${securityCode}`);
+  // 상영관에 따라 가격을 계산하는 함수
+  const calculateTotalAmount = () => {
+    console.log('Theater:', theater);
+    const childTotal = childPrice * (childCount || 0);
+    const adultTotal = adultPrice * (adultCount || 0);
+    const totalCount = childCount + adultCount;
     
-    // TODO: 부트페이 결제 코드를 추가
+    const theaterNumber = parseInt(theater.slice(-1), 10); // 문자열 끝에서 숫자만 추출하여 theaterNumber에 저장
+    
+    if (theaterNumber === 3) {
+      console.log('Theater is 3');
+      return childTotal + adultTotal + (8000 * totalCount);
+    } else {
+      console.log('Theater is not 3');
+      return childTotal + adultTotal;
+    }
+  };
 
-    // 결제가 완료되면 예매 완료 페이지로 이동
-    history.push('/CompletePage');
+  const [impLoaded, setImpLoaded] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.iamport.kr/v1/iamport.js';
+    script.async = true;
+    script.onload = () => setImpLoaded(true);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const requestPay = () => {
+    if (!window.IMP) {
+      alert('결제 모듈을 불러오는 중입니다. 잠시만 기다려주세요.');
+      return;
+    }
+
+    const IMP = window.IMP;
+    const userCode = 'imp14397622';
+    IMP.init(userCode);
+
+    IMP.request_pay(
+      {
+        pg: 'html5_inicis',
+        pay_method: 'card',
+        merchant_uid: 'test_loxnlelx',
+        name: '영화 표',
+        amount: calculateTotalAmount(),
+        buyer_tel: '010-0000-0000',
+      },
+      (rsp) => {
+        if (rsp.success) {
+          alert('결제가 완료되었습니다.');
+        } else {
+          alert('결제에 실패하였습니다.');
+        }
+      }
+    );
   };
 
   return (
-    <Box className={classes.container}>
-      <Typography variant="h4" className={classes.title}>
-        Payment Information
+    <div>
+      <Typography variant="h5" gutterBottom>
+        최종 선택 정보
       </Typography>
-      <TextField
-        label="Card Number"
-        variant="outlined"
-        className={classes.input}
-        value={cardNumber}
-        onChange={(e) => setCardNumber(e.target.value)}
-      />
-      <TextField
-        label="Expiration Date (MM/YY)"
-        variant="outlined"
-        className={classes.input}
-        value={expirationDate}
-        onChange={(e) => setExpirationDate(e.target.value)}
-      />
-      <TextField
-        label="Security Code"
-        variant="outlined"
-        className={classes.input}
-        value={securityCode}
-        onChange={(e) => setSecurityCode(e.target.value)}
-      />
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.button}
-        onClick={handlePayment}
-      >
-        Pay
+      <Typography variant="body1" paragraph>
+        영화: {movieTitle}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        상영관: {theater}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        상영시간: {time}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        선택 좌석: {selectedSeats.join(', ')}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        어린이: {childCount}명, 성인: {adultCount}명
+      </Typography>
+      <Typography variant="body1" paragraph>
+        지불 금액: {calculateTotalAmount()}원
+      </Typography>
+      <Button variant="contained" color="primary" onClick={requestPay}>
+        결제하기
       </Button>
-    </Box>
+    </div>
   );
-}
+};
 
 export default PaymentPage;

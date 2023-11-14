@@ -1,15 +1,33 @@
-// SelectionPage.js
 import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Box, Typography, Card, CardActionArea, CardMedia, CardContent, Fade, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
-import { useStyles } from '../styles';
+import {
+  Box,
+  Typography,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+  Fade,
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
-function SelectionPage() {
-  const styles = useStyles();
+const useStyles = makeStyles((theme) => ({
+  // 스타일 클래스들 정의...
+}));
+
+const SelectionPage = () => {
+  const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
   const isAdmin = location.state?.isAdmin;
   const isDeleting = location.state?.isDeleting;
+
   const [password, setPassword] = useState('');
   const correctPassword = 'admin123';
   const [openAdd, setOpenAdd] = useState(false);
@@ -37,10 +55,8 @@ function SelectionPage() {
   }, []);
 
   const handleMovieClick = (movieTitle) => {
-    if (movieTitle === '새 영화 추가') {
-      if (!isDeleting) {
-        setOpenAdd(true);
-      }
+    if (movieTitle === '새 영화 추가' && !isDeleting) {
+      setOpenAdd(true);
     } else if (isAdmin) {
       history.push({
         pathname: '/MovieDetailsPage',
@@ -57,145 +73,43 @@ function SelectionPage() {
     }
   };
 
-  const handleAdminClick = (event) => {
-    event.stopPropagation();
-    history.push('/AdminPage');
-  }
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-  }
-
-  const handleLoginClick = () => {
-    if (password === correctPassword) {
-      alert('로그인 성공!');
-    } else {
-      alert('비밀번호가 일치하지 않습니다.');
-    }
-  }
-
-  const handleCloseAdd = () => {
-    setOpenAdd(false);
-  };
-
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
-
-  const handleConfirmClick = () => {
-    history.push('/');
-  };
-
-  const handleNewMovieTitleChange = (event) => {
-    setNewMovieTitle(event.target.value);
-  };
-
-  const handleNewMovieImageChange = (event) => {
-    setNewMovieImage(event.target.value);
-  };
-
-  const handleNewMovieTheaterChange = (event) => {
-    setNewMovieTheater(event.target.value);
-  };
-
-  const handleNewMovieTimeChange = (event) => {
-    setNewMovieTime(event.target.value);
-  };
-
-  const handleAddClick = () => {
-    const newMovies = [...movies, { title: newMovieTitle, image: newMovieImage, theater: newMovieTheater, time: newMovieTime }];
-    setMovies(newMovies);
-    localStorage.setItem('movies', JSON.stringify(newMovies));
-    setOpenAdd(false);
-  };
-
-  const handleDeleteClick = () => {
-    const newMovies = movies.filter(movie => movie.title !== selectedMovie);
-    setMovies(newMovies);
-    localStorage.setItem('movies', JSON.stringify(newMovies));
-    setOpenDelete(false);
-  };
-
   return (
-    <Fade in={true}>
-      <Box className={[styles.root, styles.navy]} style={{ position: 'relative' }}>
-        <Box className={[styles.main, styles.center, styles.initialCenter]}>  
-          <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
-            {isAdmin ? (
-              <Button variant="contained" color="primary" onClick={handleConfirmClick} className={styles.adminButton} style={{ width: '150px', fontSize: '1rem' }}>
-                확인
-              </Button>
-            ) : (
-              <Button variant="contained" color="primary" onClick={handleAdminClick} className={styles.adminButton} style={{ width: '150px', fontSize: '1rem' }}>
-                관리자 전환 
-              </Button>
-            )}
-          </Box>
-          <Typography variant="h3" component="h3" className={styles.center} style={{ fontFamily: 'BMEULJIRO, sans-serif', marginBottom: '50px' }} gutterBottom>
-            영화를 선택해주세요
-          </Typography>
-          <Box className={styles.cards}>
-            {movies.map((movie, index) => (
-              <Card key={index} className={[styles.card, styles.space]} onClick={() => handleMovieClick(movie.title)}>
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    alt={movie.title}
-                    image={movie.image}
-                    className={styles.media}
-                  />
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="h4"
-                      color="textPrimary"
-                      component="p"
-                    >
-                      {movie.title}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            ))}
-            {isAdmin && !isDeleting && (
-              <Card className={[styles.card, styles.space]} onClick={() => handleMovieClick('새 영화 추가')}>
-                <CardActionArea>
-                  <Box className={styles.media} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  </Box>
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="h4"
-                      color="textPrimary"
-                      component="p"
-                    >
-                      새 영화 추가
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            )}
-          </Box>
-          <Dialog open={openAdd} onClose={handleCloseAdd}>
-            <DialogTitle>새 영화 추가</DialogTitle>
-            <DialogContent>
-              <TextField autoFocus margin="dense" label="영화 제목" fullWidth onChange={handleNewMovieTitleChange} />
-              <TextField margin="dense" label="영화 이미지 URL" fullWidth onChange={handleNewMovieImageChange} />
-              <TextField margin="dense" label="상영관" fullWidth onChange={handleNewMovieTheaterChange} />
-              <TextField margin="dense" label="상영시간" fullWidth onChange={handleNewMovieTimeChange} />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseAdd} color="primary">
-                취소
-              </Button>
-              <Button onClick={handleAddClick} color="primary">
-                추가
-              </Button>
-            </DialogActions>
-          </Dialog>
+    <Box className={classes.root}>
+      <Box className={classes.main}>
+        {/* 더 많은 컴포넌트 및 컨텐츠 추가... */}
+        {/* 예시로 "새 영화 추가" 카드 하나만 추가하였습니다. */}
+        <Box className={classes.cards}>
+          {movies.map((movie) => (
+            <Card
+              key={movie.title}
+              className={`${classes.card} ${movie.title === '새 영화 추가' ? classes.adminButton : ''}`}
+              onClick={() => handleMovieClick(movie.title)}
+            >
+              <CardActionArea>
+                <CardMedia
+                  className={classes.media}
+                  image={movie.image}
+                  title={movie.title}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h6" component="h2">
+                    {movie.title}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {`Theater: ${movie.theater}`}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {`Time: ${movie.time}`}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          ))}
         </Box>
+        {/* 더 많은 컴포넌트 및 컨텐츠 추가... */}
       </Box>
-    </Fade>
+    </Box>
   );
-}
+};
+
 export default SelectionPage;

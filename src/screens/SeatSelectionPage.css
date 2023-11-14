@@ -1,0 +1,27 @@
+/* SeatSelectionPage.css */
+
+.seat-selection-container {
+    text-align: center;
+  }
+  
+  .seat-container {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10개의 좌석을 한 줄에 표시 */
+    gap: 5px; /* 좌석 사이의 간격 */
+  }
+  
+  .seat {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .seat.selected {
+    background-color: #5cb85c; /* 선택된 좌석의 배경색 */
+    color: #fff; /* 선택된 좌석의 텍스트 색상 */
+  }
+  

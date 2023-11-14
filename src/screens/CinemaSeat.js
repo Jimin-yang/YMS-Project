@@ -1,159 +1,166 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Grid, Box, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { useHistory, useLocation } from 'react-router-dom';
-
-const seatsPerRow = 10;
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-  },
-  seat: {
-    padding: 0, // 버튼 패딩을 0으로 변경
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    flexGrow: 1,
-    minWidth: '35px', // 버튼 최소 너비를 35px로 변경
-    width: '35px', // 버튼 너비를 35px로 고정
-    height: '44px', // 버튼 높이를 44px로 고정
-    fontSize: '16px',
-  },
-  buttonContainer: {
-    marginTop: theme.spacing(10),
-  },
-  formControl: {
-    minWidth: 120,
-  },
-  '@global': {
-    '.MuiGrid-spacing-xs-3 > .MuiGrid-item': {
-      padding: '11px',
-    },
-  },
-}));
+import './SeatSelectionPage.css';
+import { useLocation, useHistory } from 'react-router-dom';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from '@material-ui/core';
 
 const CinemaSeat = () => {
-  const classes = useStyles();
-  const history = useHistory();
-  const location = useLocation();
-  const totalSeats = location.state && location.state.seats ? location.state.seats : 20;
+  const totalSeats = 30;
   const [selectedSeats, setSelectedSeats] = useState([]);
-  const [selectedCount, setSelectedCount] = useState(0);
-  const [open, setOpen] = useState(false);
-  const [seatTypes, setSeatTypes] = useState([]);
-  const movieTitle = location.state?.movieTitle || 'Unknown Movie';
-  const theater = location.state?.theater || 'Unknown Theater';
-  const time = location.state?.time || 'Unknown Time';
+  const [movieTitle, setMovieTitle] = useState('Unknown Movie');
+  const [theater, setTheater] = useState('Unknown Theater');
+  const [time, setTime] = useState('Unknown Time');
+  const [totalPersons, setTotalPersons] = useState(0);
+  const [childCount, setChildCount] = useState(0);
+  const [adultCount, setAdultCount] = useState(0);
+  const [confirmationOpen, setConfirmationOpen] = useState(false); // 확인 창 상태 추가
 
-  const handleSeatClick = (seat) => {
-    const index = selectedSeats.indexOf(seat);
-    if (index > -1) {
-      setSelectedSeats(selectedSeats.filter((s) => s !== seat));
-      setSelectedCount(selectedCount - 1);
-      setSeatTypes((prevSeatTypes) => prevSeatTypes.filter((st) => st.seat !== seat));
+  const location = useLocation();
+  const history = useHistory();
+  const { seats, movieTitle: selectedMovieTitle, theater: selectedTheater, time: selectedTime } = location.state;
+
+  useEffect(() => {
+    setSelectedSeats(seats);
+    setMovieTitle(selectedMovieTitle);
+    setTheater(selectedTheater);
+    setTime(selectedTime);
+  }, [seats, selectedMovieTitle, selectedTheater, selectedTime]);
+
+  const handleSeatClick = (seatNumber) => {
+    const isSelected = selectedSeats.includes(seatNumber);
+
+    if (isSelected) {
+      setSelectedSeats(selectedSeats.filter((seat) => seat !== seatNumber));
     } else {
-      setSelectedSeats([...selectedSeats, seat]);
-      setSelectedCount(selectedCount + 1);
-      setSeatTypes((prevSeatTypes) => [...prevSeatTypes, { seat, type: 'adult' }]);
+      setSelectedSeats([...selectedSeats, seatNumber]);
     }
   };
 
   const handleConfirmClick = () => {
-    console.log('선택된 좌석:', selectedSeats);
-    setOpen(true);
+    const selectedCount = selectedSeats.length;
+    setTotalPersons(selectedCount);
+
+    let initialChildCount = 0;
+    let initialAdultCount = selectedCount;
+
+    if (selectedCount > 0) {
+      initialChildCount = 1;
+      initialAdultCount = selectedCount - 1;
+    }
+
+    setChildCount(initialChildCount);
+    setAdultCount(initialAdultCount);
+    setConfirmationOpen(true);
   };
-  
-  const handleBackClick = () => {
-    history.push('/Selection');
+
+  const handleChildCountChange = (count) => {
+    setChildCount(count);
+    setAdultCount(totalPersons - count); // 어른 수 자동 조정
   };
-  
-  const handleClose = () => {
-    setOpen(false);
-    // 선택된 seatTypes에 따라 다른 페이지로 이동합니다.
-    seatTypes.forEach(({ seat, type }) => {
-      console.log(`좌석 ${seat + 1}의 유형: ${type}`);
-      // 여기에서 seat와 type을 활용하여 필요한 작업을 수행하세요.
-      // 예: DB에 저장, 서버에 전송 등
+
+  const handleAdultCountChange = (count) => {
+    setAdultCount(count);
+    setChildCount(totalPersons - count); // 어린이 수 자동 조정
+  };
+
+  const handleConfirmationButtonClick = () => {
+    handlePaymentPageNavigation();
+    setConfirmationOpen(false);
+  };
+
+  const handlePaymentPageNavigation = () => {
+    history.push('/PaymentPage', {
+      movieTitle: movieTitle,
+      theater: theater,
+      time: time,
+      selectedSeats: selectedSeats,
+      childCount: childCount,
+      adultCount: adultCount,
+      totalPersons: totalPersons,
     });
-    history.push('/PaymentPage'); // 기본적으로 PaymentPage로 이동합니다.
   };
-  
-  useEffect(() => {
-    // selectedSeats가 변경된 후에 seatTypes를 업데이트합니다.
-    setSeatTypes(selectedSeats.map((seat) => ({ seat, type: 'adult' })));
-  }, [selectedSeats]);
-  
+
+  const handleCloseConfirmation = () => {
+    setConfirmationOpen(false);
+  };
+
+  const handleGoBack = () => {
+    history.goBack();
+  };
+
+  const renderSeats = () => {
+    const seats = [];
+    for (let i = 1; i <= totalSeats; i++) {
+      const isSelected = selectedSeats.includes(i);
+      seats.push(
+        <div
+          key={i}
+          className={`seat ${isSelected ? 'selected' : ''}`}
+          onClick={() => handleSeatClick(i)}
+        >
+          {isSelected ? 'X' : i}
+        </div>
+      );
+    }
+    return seats;
+  };
+
   return (
-    <Box className={classes.root}>
+    <div className="seat-selection-container">
       <h1>좌석 선택</h1>
-      <Grid container justifyContent="center" spacing={3}>
-        {[...Array(Math.ceil(totalSeats / seatsPerRow))].map((_, rowIndex) => (
-          <Grid container item key={rowIndex} justifyContent="center" spacing={3}>
-            {[...Array(seatsPerRow)].map((_, colIndex) => {
-              const seatNumber = rowIndex * seatsPerRow + colIndex;
-              return (
-                <Grid item key={seatNumber}>
-                  <Button
-                    variant="contained"
-                    color={selectedSeats.includes(seatNumber) ? 'secondary' : 'primary'}
-                    onClick={() => handleSeatClick(seatNumber)}
-                    className={classes.seat}
-                  >
-                    {seatNumber + 1}
-                  </Button>
-                </Grid>
-              );
-            })}
-          </Grid>
-        ))}
-  
-        <Box className={classes.buttonContainer}>
-          <Button variant="contained" color="primary" onClick={handleConfirmClick}>
-            확인
-          </Button>
-          <Button variant="contained" color="secondary" onClick={handleBackClick} style={{ marginLeft: '10px' }}>
-            돌아가기
-          </Button>
-        </Box>
-  
-        {/* 팝업 창 */}
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>팝업 창</DialogTitle>
-          <DialogContent>
-            <p>선택된 좌석: {selectedSeats.map(seat => seat + 1).join(', ')}</p>
-  
-            {seatTypes.map(({ seat, type }) => (
-              <FormControl key={seat} className={classes.formControl}>
-                <InputLabel id={`seat-type-label-${seat + 1}`}>{`좌석 ${seat + 1} 유형 선택`}</InputLabel>
-                <Select
-                  labelId={`seat-type-label-${seat+1}`}
-                  id={`seat-type-select-${seat+1}`}
-                  value={type}
-                  onChange={(e) => {
-                    setSeatTypes(seatTypes.map((st) => (st.seat === seat ? { ...st, type: e.target.value } : st)));
-                  }}
-                >
-                  <MenuItem value="adult">성인</MenuItem>
-                  <MenuItem value="senior">노약자</MenuItem>
-                  <MenuItem value="child">어린이</MenuItem>
-              </Select>
-            </FormControl>
-          ))}
+      <p>Active selection: {movieTitle} - {theater} - {time}</p>
+      <div className="seat-container">{renderSeats()}</div>
+      <div className="button-container">
+        <button className="confirm-button" onClick={handleConfirmClick}>
+          확인
+        </button>
+        <button className="back-button" onClick={handleGoBack}>
+          돌아가기
+        </button>
+      </div>
+
+      <Dialog open={confirmationOpen} onClose={handleCloseConfirmation}>
+        <DialogTitle>좌석 선택 확인</DialogTitle>
+        <DialogContent>
+          <p>Total Persons: {totalPersons}</p>
+          <p>어린이: {childCount}명</p>
+          <div className="person-button-container">
+            {[...Array(totalPersons + 1)].map((_, index) => (
+              <Button
+                key={`child-${index}`}
+                className={`child-button ${childCount === index ? 'selected' : ''}`}
+                onClick={() => handleChildCountChange(index)}
+              >
+                {index}명
+              </Button>
+            ))}
+          </div>
+          <p>어른: {adultCount}명</p>
+          <div className="person-button-container">
+            {[...Array(totalPersons + 1)].map((_, index) => (
+              <Button
+                key={`adult-${index}`}
+                className={`adult-button ${adultCount === index ? 'selected' : ''}`}
+                onClick={() => handleAdultCountChange(index)}
+              >
+                {index}명
+              </Button>
+            ))}
+          </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleConfirmationButtonClick} color="primary">
             확인
           </Button>
         </DialogActions>
       </Dialog>
-    </Grid>
-  </Box>
-);
+    </div>
+  );
 };
 
 export default CinemaSeat;

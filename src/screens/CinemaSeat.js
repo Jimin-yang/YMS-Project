@@ -1,44 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Grid, Box, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useLocation } from 'react-router-dom';
+import { cinemaSeatStyles } from '../styles';
 
 const seatsPerRow = 10;
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-  },
-  seat: {
-    padding: 0, // 버튼 패딩을 0으로 변경
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    flexGrow: 1,
-    minWidth: '35px', // 버튼 최소 너비를 35px로 변경
-    width: '35px', // 버튼 너비를 35px로 고정
-    height: '44px', // 버튼 높이를 44px로 고정
-    fontSize: '16px',
-  },
-  buttonContainer: {
-    marginTop: theme.spacing(10),
-  },
-  formControl: {
-    minWidth: 120,
-  },
-  '@global': {
-    '.MuiGrid-spacing-xs-3 > .MuiGrid-item': {
-      padding: '11px',
-    },
-  },
-}));
+
+
 
 const CinemaSeat = () => {
-  const classes = useStyles();
+  const classes = cinemaSeatStyles();
   const history = useHistory();
   const location = useLocation();
   const totalSeats = location.state && location.state.seats ? location.state.seats : 20;

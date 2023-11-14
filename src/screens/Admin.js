@@ -2,35 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Typography, Button, Box, Grid, Card, CardContent, IconButton } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-
-const useStyles = makeStyles({
-  root: {
-    marginTop: '20px',
-  },
-  title: {
-    textAlign: 'center',
-    marginBottom: '20px',
-  },
-  movieCard: {
-    marginBottom: '20px',
-    height: '200px', // Add this line
-  },
-  movieTitle: {
-    marginBottom: '10px',
-  },
-  button: {
-    marginRight: '10px',
-  },
-  arrowButton: {
-    margin: '0 10px',
-  },
-});
+import {adminStyles} from '../styles';
 
 function Admin() {
-  const classes = useStyles();
+  const classes = adminStyles();
   const history = useHistory();
 
   const initialMovies = [

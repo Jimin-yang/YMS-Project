@@ -1,31 +1,11 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, TextField, Button } from '@material-ui/core';
+import {adminpagesty} from '../styles';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    marginBottom: theme.spacing(4),
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
 
 function AdminPage() {
-  const classes = useStyles();
+  const classes = adminpagesty();
   const history = useHistory(); // useHistory hook을 사용하여 history 객체를 가져옵니다.
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

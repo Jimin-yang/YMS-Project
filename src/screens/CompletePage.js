@@ -1,3 +1,9 @@
+/* 
+11/15 
+useEffect, setTimeout 함수 -> useCallback, useRef 으로 변경
+*/
+
+
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box, Typography } from '@material-ui/core';

@@ -1,3 +1,10 @@
+/*
+11/15
+ Dialog 컴포넌트에서 사용하는 Button 컴포넌트를 변수로 선언
+
+ */
+
+
 import React, { useState, useEffect } from 'react';
 import './SeatSelectionPage.css';
 import { useLocation, useHistory } from 'react-router-dom';

@@ -1,3 +1,19 @@
+/*
+11/15
+
+* handleDeleteClick, setPreviousMovies 함수를 호출하는 부분을 제거, 
+setMovies 함수를 호출 후 previousMovies 상태를 업데이트
+
+* handleUndoClick, localStorage에 저장된 이전 영화 목록을 가져와서 
+previousMovies 상태를 업데이트하는 부분을 제거
+
+* handleResetClick, localStorage에 저장된 초기 영화 목록을 가져와서 
+setMovies 함수를 호출하는 부분을 제거
+
+* displayMovies 배열을 생성하는 부분 movies 배열에서 바로 생성하도록 변경
+*/ 
+
+
 // Admin.js
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';

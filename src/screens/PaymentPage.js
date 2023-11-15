@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 const PaymentPage = ({ location }) => {
+  const history = useHistory();
   const {
     movieTitle,
     theater,
@@ -68,7 +70,7 @@ const PaymentPage = ({ location }) => {
       },
       (rsp) => {
         if (rsp.success) {
-          alert('결제가 완료되었습니다.');
+          history.push('/CompletePage');
         } else {
           alert('결제에 실패하였습니다.');
         }

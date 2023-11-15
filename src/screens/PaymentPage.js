@@ -54,17 +54,17 @@ const PaymentPage = ({ location }) => {
     }
 
     const IMP = window.IMP;
-    const userCode = 'imp14397622';
+    const userCode = 'imp67563368';
     IMP.init(userCode);
 
     IMP.request_pay(
       {
-        pg: 'html5_inicis',
+        pg: 'kakaopay',
         pay_method: 'card',
         merchant_uid: 'test_loxnlelx',
         name: '영화 표',
         amount: calculateTotalAmount(),
-        buyer_tel: '010-0000-0000',
+        buyer_tel: '012-3456-7890',
       },
       (rsp) => {
         if (rsp.success) {

@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 
 const CinemaSeat = () => {
-  const totalSeats = 30;
+  const TOTAL_SEATS = 30;
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [movieTitle, setMovieTitle] = useState('Unknown Movie');
   const [theater, setTheater] = useState('Unknown Theater');
@@ -18,7 +18,7 @@ const CinemaSeat = () => {
   const [totalPersons, setTotalPersons] = useState(0);
   const [childCount, setChildCount] = useState(0);
   const [adultCount, setAdultCount] = useState(0);
-  const [confirmationOpen, setConfirmationOpen] = useState(false); // 확인 창 상태 추가
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
   const location = useLocation();
   const history = useHistory();
@@ -55,60 +55,83 @@ const CinemaSeat = () => {
 
     setChildCount(initialChildCount);
     setAdultCount(initialAdultCount);
-    setConfirmationOpen(true);
+    setIsConfirmationOpen(true);
   };
 
   const handleChildCountChange = (count) => {
     setChildCount(count);
-    setAdultCount(totalPersons - count); // 어른 수 자동 조정
+    setAdultCount(totalPersons - count);
   };
 
   const handleAdultCountChange = (count) => {
     setAdultCount(count);
-    setChildCount(totalPersons - count); // 어린이 수 자동 조정
+    setChildCount(totalPersons - count);
   };
 
   const handleConfirmationButtonClick = () => {
     handlePaymentPageNavigation();
-    setConfirmationOpen(false);
+    setIsConfirmationOpen(false);
   };
 
   const handlePaymentPageNavigation = () => {
     history.push('/PaymentPage', {
-      movieTitle: movieTitle,
-      theater: theater,
-      time: time,
-      selectedSeats: selectedSeats,
-      childCount: childCount,
-      adultCount: adultCount,
-      totalPersons: totalPersons,
+      movieTitle,
+      theater,
+      time,
+      selectedSeats,
+      childCount,
+      adultCount,
+      totalPersons,
     });
   };
 
   const handleCloseConfirmation = () => {
-    setConfirmationOpen(false);
+    setIsConfirmationOpen(false);
   };
 
   const handleGoBack = () => {
     history.goBack();
   };
 
+  const renderSeat = (seatNumber) => {
+    const isSelected = selectedSeats.includes(seatNumber);
+    return (
+      <div
+        key={seatNumber}
+        className={`seat ${isSelected ? 'selected' : ''}`}
+        onClick={() => handleSeatClick(seatNumber)}
+      >
+        {isSelected ? 'X' : seatNumber}
+      </div>
+    );
+  };
+
   const renderSeats = () => {
     const seats = [];
-    for (let i = 1; i <= totalSeats; i++) {
-      const isSelected = selectedSeats.includes(i);
-      seats.push(
-        <div
-          key={i}
-          className={`seat ${isSelected ? 'selected' : ''}`}
-          onClick={() => handleSeatClick(i)}
-        >
-          {isSelected ? 'X' : i}
-        </div>
-      );
+    for (let i = 1; i <= TOTAL_SEATS; i++) {
+      seats.push(renderSeat(i));
     }
     return seats;
   };
+
+  const renderPersonButtons = (type) => {
+    const buttons = [];
+    for (let i = 0; i <= totalPersons; i++) {
+      const isSelected = type === 'child' ? childCount === i : adultCount === i;
+      buttons.push(
+        <Button
+          key={`${type}-${i}`}
+          className={`${type}-button ${isSelected ? 'selected' : ''}`}
+          onClick={() => type === 'child' ? handleChildCountChange(i) : handleAdultCountChange(i)}
+        >
+          {i}명
+        </Button>
+      );
+    }
+    return buttons;
+  };
+
+  const confirmationButton = <Button onClick={handleConfirmationButtonClick} color="primary">확인</Button>;
 
   return (
     <div className="seat-selection-container">
@@ -124,39 +147,21 @@ const CinemaSeat = () => {
         </button>
       </div>
 
-      <Dialog open={confirmationOpen} onClose={handleCloseConfirmation}>
+      <Dialog open={isConfirmationOpen} onClose={handleCloseConfirmation}>
         <DialogTitle>좌석 선택 확인</DialogTitle>
         <DialogContent>
           <p>Total Persons: {totalPersons}</p>
           <p>어린이: {childCount}명</p>
           <div className="person-button-container">
-            {[...Array(totalPersons + 1)].map((_, index) => (
-              <Button
-                key={`child-${index}`}
-                className={`child-button ${childCount === index ? 'selected' : ''}`}
-                onClick={() => handleChildCountChange(index)}
-              >
-                {index}명
-              </Button>
-            ))}
+            {renderPersonButtons('child')}
           </div>
           <p>어른: {adultCount}명</p>
           <div className="person-button-container">
-            {[...Array(totalPersons + 1)].map((_, index) => (
-              <Button
-                key={`adult-${index}`}
-                className={`adult-button ${adultCount === index ? 'selected' : ''}`}
-                onClick={() => handleAdultCountChange(index)}
-              >
-                {index}명
-              </Button>
-            ))}
+            {renderPersonButtons('adult')}
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleConfirmationButtonClick} color="primary">
-            확인
-          </Button>
+          {confirmationButton}
         </DialogActions>
       </Dialog>
     </div>

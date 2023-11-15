@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Container, Typography, Button, Box, Grid, Card, CardContent, IconButton } from '@material-ui/core';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import {adminStyles} from '../styles';
+import { adminStyles } from '../styles';
 
 function Admin() {
   const classes = adminStyles();
@@ -19,34 +19,28 @@ function Admin() {
     { title: 'Pulp Fiction', image: 'path_to_image6', theater: 'Theater 6', time: '03:00' },
   ];
 
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState(() => {
+    const storedMovies = localStorage.getItem('movies');
+    return storedMovies ? JSON.parse(storedMovies) : initialMovies;
+  });
   const [previousMovies, setPreviousMovies] = useState([]);
 
   useEffect(() => {
-    const storedMovies = localStorage.getItem('movies');
-    if (storedMovies) {
-      setMovies(JSON.parse(storedMovies));
-    } else {
-      setMovies(initialMovies);
-      localStorage.setItem('movies', JSON.stringify(initialMovies));
-    }
-  }, []);
+    localStorage.setItem('movies', JSON.stringify(movies));
+  }, [movies]);
 
   const handleDeleteClick = (movieTitle) => {
-    setPreviousMovies(movies);
     const newMovies = movies.filter(movie => movie.title !== movieTitle);
+    setPreviousMovies(movies);
     setMovies(newMovies);
-    localStorage.setItem('movies', JSON.stringify(newMovies));
   };
 
   const handleUndoClick = () => {
     setMovies(previousMovies);
-    localStorage.setItem('movies', JSON.stringify(previousMovies));
   };
 
   const handleResetClick = () => {
     setMovies(initialMovies);
-    localStorage.setItem('movies', JSON.stringify(initialMovies));
   };
 
   const handleAddClick = () => {

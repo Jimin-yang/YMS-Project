@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Button, Grid } from '@material-ui/core';
@@ -33,27 +33,41 @@ function AdminPage() {
   const [pin, setPin] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  const handleErrorMessage = (message) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage('');
+    }, 2000);
+  };
+
   const handlePinInput = (input) => {
-    if (input === 'DEL') {
-      if (pin === '') {
-        history.push('/');
-      } else {
-        setPin(pin.slice(0, -1));
-      }
-    } else if (input === 'CONFIRM') {
-      if (pin === '4789') {
-        history.push('/Admin');
-      } else {
-        setErrorMessage('비밀번호가 일치하지 않습니다.');
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 2000);
-        setPin('');
-      }
-    } else {
-      setPin(pin + input);
+    switch (input) {
+      case 'DEL':
+        if (pin === '') {
+          history.push('/');
+        } else {
+          setPin(pin.slice(0, -1));
+        }
+        break;
+      case 'CONFIRM':
+        if (pin === '4789') {
+          history.push('/Admin');
+        } else {
+          handleErrorMessage('비밀번호가 일치하지 않습니다.');
+          setPin('');
+        }
+        break;
+      default:
+        setPin(pin + input);
+        break;
     }
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      handleErrorMessage(errorMessage);
+    }
+  }, [errorMessage]);
 
   return (
     <Container className={classes.root}>

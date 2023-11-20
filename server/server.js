@@ -22,6 +22,17 @@ db.all("SELECT name FROM sqlite_master WHERE type='table'", [], (err, tables) =>
   });
 });
 
+// 영화 데이터를 제공하는 엔드포인트
+app.get('/api/movies', (req, res) => {
+  db.all('SELECT * FROM Movies', [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
+
 // 정적 파일을 제공할 디렉토리 설정
 app.use(express.static(path.join(__dirname, '../build')));
 

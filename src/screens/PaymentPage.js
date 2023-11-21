@@ -36,12 +36,18 @@ const PaymentPage = ({ location }) => {
   };
 
   const [impLoaded, setImpLoaded] = useState(false);
+  let IMP; // IMP 모듈 전역 변수로 선언
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://cdn.iamport.kr/v1/iamport.js';
+    script.src = "https://cdn.iamport.kr/v1/iamport.js";
     script.async = true;
-    script.onload = () => setImpLoaded(true);
+    script.onload = () => {
+      setImpLoaded(true); // 모듈이 로드되고 초기화됨을 나타내는 상태 변경
+      IMP = window.IMP; // 전역 변수에 모듈 할당
+      const userCode = 'imp14397622';
+      IMP.init(userCode);
+    };
     document.head.appendChild(script);
 
     return () => {
@@ -50,20 +56,16 @@ const PaymentPage = ({ location }) => {
   }, []);
 
   const requestPay = () => {
-    if (!window.IMP) {
+    if (!IMP) {
       alert('결제 모듈을 불러오는 중입니다. 잠시만 기다려주세요.');
       return;
     }
-
-    const IMP = window.IMP;
-    const userCode = 'imp67563368';
-    IMP.init(userCode);
 
     IMP.request_pay(
       {
         pg: 'kakaopay',
         pay_method: 'card',
-        merchant_uid: 'test_loxnlelx',
+        merchant_uid: 'test_lp8gb9b9',
         name: '영화 표',
         amount: calculateTotalAmount(),
         buyer_tel: '012-3456-7890',

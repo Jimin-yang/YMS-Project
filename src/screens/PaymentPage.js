@@ -40,45 +40,42 @@ const PaymentPage = ({ location }) => {
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = "https://cdn.iamport.kr/v1/iamport.js";
+    script.src = 'https://cdn.iamport.kr/v1/iamport.js';
     script.async = true;
     script.onload = () => {
-      setImpLoaded(true); // 모듈이 로드되고 초기화됨을 나타내는 상태 변경
-      IMP = window.IMP; // 전역 변수에 모듈 할당
       const userCode = 'imp14397622';
-      IMP.init(userCode);
+      window.IMP.init(userCode);
+      setImpLoaded(true); // 모듈이 로드되고 초기화됨을 나타내는 상태 변경
     };
     document.head.appendChild(script);
-
+  
     return () => {
       document.head.removeChild(script);
     };
   }, []);
-
+  
   const requestPay = () => {
-    if (!IMP) {
+    if (!impLoaded) {
       alert('결제 모듈을 불러오는 중입니다. 잠시만 기다려주세요.');
       return;
     }
-
-    IMP.request_pay(
-      {
-        pg: 'kakaopay',
-        pay_method: 'card',
-        merchant_uid: 'test_lp8gb9b9',
-        name: '영화 표',
-        amount: calculateTotalAmount(),
-        buyer_tel: '012-3456-7890',
-      },
-      (rsp) => {
-        if (rsp.success) {
-          history.push('/CompletePage');
-        } else {
-          alert('결제에 실패하였습니다.');
-        }
+  
+    const amount = calculateTotalAmount(); // 총 결제 금액 계산
+    window.IMP.request_pay({
+      pg: 'kakaopay',
+      pay_method: 'card',
+      merchant_uid: 'test_lp8h3p60',
+      name: '영화 표',
+      amount: amount,
+      buyer_tel: '012-3456-7890',
+    }, (rsp) => {
+      if (rsp.success) {
+        history.push('/CompletePage');
+      } else {
+        alert('결제에 실패하였습니다.');
       }
-    );
-  };
+    });
+  };  
 
   return (
     <div>

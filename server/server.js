@@ -1,9 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const models = require('../models'); // models 모듈을 가져오는 부분에서 오류 발생 가능성이 있습니다. 정의된 모듈이 아니라면 수정이 필요합니다.
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3001;
 const dbPath = '../DataBase/movieDB.db';
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
   Box,
@@ -38,20 +39,18 @@ const SelectionPage = () => {
   const [newMovieTime, setNewMovieTime] = useState('');
   const [selectedMovie, setSelectedMovie] = useState(null);
 
-  const [movies, setMovies] = useState([
-    { title: 'The Shawshank Redemption', image: 'path_to_image1', theater: 'Theater 1', time: '12:00' },
-    { title: 'The Godfather', image: 'path_to_image2', theater: 'Theater 2', time: '15:00' },
-    { title: 'The Dark Knight', image: 'path_to_image3', theater: 'Theater 3', time: '18:00' },
-    { title: 'Inception', image: 'path_to_image4', theater: 'Theater 4', time: '21:00' },
-    { title: 'The Matrix', image: 'path_to_image5', theater: 'Theater 5', time: '24:00' },
-    { title: 'Pulp Fiction', image: 'path_to_image6', theater: 'Theater 6', time: '03:00' },
-  ]);
+  const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    const storedMovies = localStorage.getItem('movies');
-    if (storedMovies) {
-      setMovies(JSON.parse(storedMovies));
-    }
+    // 서버에서 영화 데이터를 가져옵니다.
+    axios.get('http://localhost:3001/api/movies')
+      .then(response => {
+        // 가져온 데이터를 상태로 설정합니다.
+        setMovies(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
   }, []);
 
   const handleMovieClick = (movieTitle) => {

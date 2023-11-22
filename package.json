@@ -18,6 +18,7 @@
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
+    "sequelize": "^6.35.1",
     "sqlite3": "^5.1.6",
     "use-reducer-thunk": "^1.0.8",
     "web-vitals": "^0.2.4"

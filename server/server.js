@@ -17,16 +17,28 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
     console.log('Connected to the movieDB database.');
 
     // 영화 데이터를 제공하는 엔드포인트
-    app.get('/api/movies', (req, res) => {
-      db.all('SELECT * FROM Movies', [], (err, rows) => {
-        if (err) {
-          console.error(err.message);
-          res.status(500).json({ error: 'Internal Server Error' });
-        } else {
-          res.json(rows);
-        }
-      });
-    });
+app.get('/api/movies', (req, res) => {
+  db.all('SELECT * FROM Movies', [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+// 영화 좌석 데이터를 제공하는 엔드포인트
+app.get('/api/seats', (req, res) => {
+  db.all('SELECT * FROM Seats', [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
 
     // 정적 파일을 제공할 디렉토리 설정
     app.use(express.static(path.join(__dirname, '../build')));

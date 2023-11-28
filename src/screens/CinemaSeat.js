@@ -5,44 +5,58 @@
  */
 
 
-import React, { useState, useEffect } from 'react';
-import './SeatSelectionPage.css';
-import { useLocation, useHistory } from 'react-router-dom';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from '@material-ui/core';
+ import React, { useState, useEffect } from 'react';
+ import './SeatSelectionPage.css';
+ import { useLocation, useHistory } from 'react-router-dom';
+ import {
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogActions,
+   Button,
+ } from '@material-ui/core';
+ 
+ const CinemaSeat = () => {
+   const TOTAL_SEATS = 30;
+   const [selectedSeats, setSelectedSeats] = useState([]);
+   const [movieTitle, setMovieTitle] = useState('Unknown Movie');
+   const [theater, setTheater] = useState('Unknown Theater');
+   const [time, setTime] = useState('Unknown Time');
+   const [totalPersons, setTotalPersons] = useState(0);
+   const [childCount, setChildCount] = useState(0);
+   const [adultCount, setAdultCount] = useState(0);
+   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+   const [seats, setSeats] = useState([]);
+ 
+   const location = useLocation();
+   const history = useHistory();
+   const { movieTitle: selectedMovieTitle, theater: selectedTheater, time: selectedTime } = location.state || {};
 
-const CinemaSeat = () => {
-  const TOTAL_SEATS = 30;
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const [movieTitle, setMovieTitle] = useState('Unknown Movie');
-  const [theater, setTheater] = useState('Unknown Theater');
-  const [time, setTime] = useState('Unknown Time');
-  const [totalPersons, setTotalPersons] = useState(0);
-  const [childCount, setChildCount] = useState(0);
-  const [adultCount, setAdultCount] = useState(0);
-  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-
-  const location = useLocation();
-  const history = useHistory();
-  const { seats, movieTitle: selectedMovieTitle, theater: selectedTheater, time: selectedTime } = location.state;
+   useEffect(() => {
+    fetch('/api/seats')
+      .then(response => response.json())
+      .then(data => setSeats(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
 
   useEffect(() => {
-    setSelectedSeats(seats);
-    setMovieTitle(selectedMovieTitle);
-    setTheater(selectedTheater);
-    setTime(selectedTime);
+    if (seats) {
+      setSelectedSeats(seats);
+    }
+    if (selectedMovieTitle) {
+      setMovieTitle(selectedMovieTitle);
+    }
+    if (selectedTheater) {
+      setTheater(selectedTheater);
+    }
+    if (selectedTime) {
+      setTime(selectedTime);
+    }
   }, [seats, selectedMovieTitle, selectedTheater, selectedTime]);
 
   const handleSeatClick = (seatNumber) => {
-    const isSelected = selectedSeats.includes(seatNumber);
-
-    if (isSelected) {
-      setSelectedSeats(selectedSeats.filter((seat) => seat !== seatNumber));
+    if (selectedSeats.includes(seatNumber)) {
+      setSelectedSeats(selectedSeats.filter(seat => seat !== seatNumber));
     } else {
       setSelectedSeats([...selectedSeats, seatNumber]);
     }

@@ -4,7 +4,7 @@
 
  */
 
-
+ import axios from 'axios';
  import React, { useState, useEffect } from 'react';
  import './SeatSelectionPage.css';
  import { useLocation, useHistory } from 'react-router-dom';
@@ -33,34 +33,35 @@
    const { movieTitle: selectedMovieTitle, theater: selectedTheater, time: selectedTime } = location.state || {};
 
    useEffect(() => {
-    fetch('/api/seats')
-      .then(response => response.json())
-      .then(data => setSeats(data))
-      .catch(error => console.error('Error:', error));
+    axios.get('http://localhost:3001/api/seats')
+      .then(response => {
+        setSeats(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
   }, []);
 
-  useEffect(() => {
-    if (seats) {
-      setSelectedSeats(seats);
-    }
-    if (selectedMovieTitle) {
-      setMovieTitle(selectedMovieTitle);
-    }
-    if (selectedTheater) {
-      setTheater(selectedTheater);
-    }
-    if (selectedTime) {
-      setTime(selectedTime);
-    }
-  }, [seats, selectedMovieTitle, selectedTheater, selectedTime]);
+  
+    useEffect(() => {
+      if (selectedMovieTitle) {
+        setMovieTitle(selectedMovieTitle);
+      }
+      if (selectedTheater) {
+        setTheater(selectedTheater);
+      }
+      if (selectedTime) {
+        setTime(selectedTime);
+      }
+    }, [selectedMovieTitle, selectedTheater, selectedTime]);
 
-  const handleSeatClick = (seatNumber) => {
-    if (selectedSeats.includes(seatNumber)) {
-      setSelectedSeats(selectedSeats.filter(seat => seat !== seatNumber));
-    } else {
-      setSelectedSeats([...selectedSeats, seatNumber]);
-    }
-  };
+    const handleSeatClick = (seat) => {
+      if (selectedSeats.includes(seat)) {
+        setSelectedSeats(selectedSeats.filter(selectedSeat => selectedSeat !== seat));
+      } else {
+        setSelectedSeats([...selectedSeats, seat]);
+      }
+    };
 
   const handleConfirmClick = () => {
     const selectedCount = selectedSeats.length;

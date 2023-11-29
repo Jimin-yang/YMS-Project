@@ -17,8 +17,27 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
     console.log('Connected to the movieDB database.');
 
     // 영화 데이터를 제공하는 엔드포인트
-app.get('/api/movies', (req, res) => {
+/*app.get('/api/movies', (req, res) => {
   db.all('SELECT * FROM Movies', [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(rows);
+    }
+  });
+});*/
+// 새로운 엔드포인트 추가: 영화 선택 페이지에서 필요한 데이터 조회
+app.get('/api/selection-data', (req, res) => {
+  const query = `
+    SELECT MovieShowings.id, Movies.title AS movieTitle, Theaters.name AS theater, Times.value AS time
+    FROM MovieShowings
+    INNER JOIN Movies ON MovieShowings.movieid = Movies.movieid
+    INNER JOIN Theaters ON MovieShowings.theaterid = Theaters.theaterid
+    INNER JOIN Times ON MovieShowings.timeid = Times.timeid
+  `;
+
+  db.all(query, [], (err, rows) => {
     if (err) {
       console.error(err.message);
       res.status(500).json({ error: 'Internal Server Error' });

@@ -11,18 +11,42 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "assert": "^2.1.0",
     "axios": "^0.21.4",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "constants-browserify": "^1.0.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "crypto-browserify": "^3.12.0",
+    "dns": "^0.2.2",
     "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^11.2.0",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
+    "https-browserify": "^1.0.0",
     "mongoose": "^5.11.7",
+    "net": "^1.0.2",
+    "os": "^0.1.2",
+    "os-browserify": "^0.3.0",
+    "path": "^0.12.7",
+    "path-browserify": "^1.0.1",
     "react": "^17.0.1",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
     "sequelize": "^6.35.1",
     "sqlite3": "^5.1.6",
+    "stream": "^0.0.2",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "tls": "^0.0.1",
+    "url": "^0.11.3",
     "use-reducer-thunk": "^1.0.8",
-    "web-vitals": "^0.2.4"
+    "util": "^0.12.5",
+    "web-vitals": "^0.2.4",
+    "zlib": "^1.0.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -49,6 +73,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.3.3"
+    "@types/react-router-dom": "^5.3.3",
+    "html-loader": "^4.2.0"
   }
 }

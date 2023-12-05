@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, CssBaseline, Paper, ThemeProvider, createMuiTheme } from "@material-ui/core";
+import { Container, CssBaseline, Paper, ThemeProvider, createTheme } from "@material-ui/core";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import SelectionPage from "./screens/SelectionPage";
 import MainPage from "./screens/MainPage";
@@ -7,11 +7,12 @@ import AdminPage from './screens/AdminPage';
 import Admin from './screens/Admin';
 import MovieDetailsPage from './screens/MovieDetailsPage';
 import CinemaSeat from './screens/CinemaSeat';
-import PaymentPage from './screens/PaymentPage'; // PaymentPage 컴포넌트를 import 합니다.
-import CompletePage from './screens/CompletePage'; // CompletePage 컴포넌트를 import 합니다.
+import PaymentPage from './screens/PaymentPage';
+import CompletePage from './screens/CompletePage';
 import { useStyles } from './styles';
 
-const theme = createMuiTheme({
+// createMuiTheme를 createTheme으로 변경
+const theme = createTheme({
   typography: {
     h1: { fontWeight: 'bold' },
     h2: {
@@ -49,7 +50,7 @@ function App() {
               <Route path="/MovieDetailsPage" component={MovieDetailsPage} />
               <Route path="/CinemaSeat" component={CinemaSeat} />
               <Route path="/SelectionPage" component={SelectionPage} />
-              <Route path="/PaymentPage" component={PaymentPage} /> {/* PaymentPage 컴포넌트를 실행하는 Route를 추가합니다. */}
+              <Route path="/PaymentPage" component={PaymentPage} />
               <Route path="/CompletePage" component={CompletePage} />
             </Switch>
           </Router>

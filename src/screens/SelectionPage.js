@@ -8,19 +8,12 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
-  Fade,
-  Button,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  // 스타일 클래스들 정의...
+  // 여기에 스타일 클래스들을 정의하세요...
 }));
 
 const SelectionPage = () => {
@@ -104,28 +97,32 @@ const SelectionPage = () => {
     }
   };
   
-
   return (
     <Box className={classes.cards}>
       <Box className={classes.main}>
         <Box className={classes.cards}>
           {showings.map((showing) => (
             <Card
-              key={showing.id} // 여기에 key 추가
+              key={showing.id}
               className={`${classes.card} ${showing.movieTitle === '새 영화 추가' ? classes.adminButton : ''}`}
               onClick={() => handleMovieClick(showing.id)}
             >
               <CardActionArea>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={4}> {/* 첫 번째 칼럼 */}
+                  <Grid item xs={4}>
                     <CardMedia
                       className={classes.media}
                       title={showing.movieTitle}
                       image={showing.movieImage}
                     />
-                    <img src={"showing.movieImage"} alt={showing.movieTitle} className={classes.movieImage} />
+                    <img
+                      src={showing.movieImage}
+                      alt={showing.movieTitle}
+                      className={classes.movieImage}
+                      style={{ width: '200px', height: 'auto' }} // 이미지 크기 조정 스타일 적용
+                    />
                   </Grid>
-                  <Grid item xs={8}> {/* 두 번째 칼럼 */}
+                  <Grid item xs={8}>
                     <CardContent className={classes.cardContent}>
                       <div className={classes.flexContainer}>
                         <div>

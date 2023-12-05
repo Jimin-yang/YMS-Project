@@ -17,6 +17,7 @@ import {
   DialogActions,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   // 스타일 클래스들 정의...
@@ -115,23 +116,33 @@ const SelectionPage = () => {
               onClick={() => handleMovieClick(showing.id)}
             >
               <CardActionArea>
-                <CardMedia
-                  className={classes.media}
-                  image={showing.movieImage}
-                  title={showing.movieTitle}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h6" component="h2">
-                    {showing.movieTitle}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {`상영관: ${showing.theater}`}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    {`상영시간: ${showing.time}`}
-                  </Typography>
-
-                </CardContent>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={4}> {/* 첫 번째 칼럼 */}
+                    <CardMedia
+                      className={classes.media}
+                      title={showing.movieTitle}
+                      image={showing.movieImage}
+                    />
+                    <img src={"showing.movieImage"} alt={showing.movieTitle} className={classes.movieImage} />
+                  </Grid>
+                  <Grid item xs={8}> {/* 두 번째 칼럼 */}
+                    <CardContent className={classes.cardContent}>
+                      <div className={classes.flexContainer}>
+                        <div>
+                          <Typography gutterBottom variant="h6" component="h2">
+                            {showing.movieTitle}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary" component="p">
+                            {`상영관: ${showing.theater}`}
+                          </Typography>
+                          <Typography variant="body2" color="textSecondary" component="p">
+                            {`상영시간: ${showing.time}`}
+                          </Typography>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Grid>
+                </Grid>
               </CardActionArea>
             </Card>
           ))}

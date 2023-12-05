@@ -30,7 +30,7 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
 // 새로운 엔드포인트 추가: 영화 선택 페이지에서 필요한 데이터 조회
 app.get('/api/selection-data', (req, res) => {
   const query = `
-    SELECT MovieShowings.id, Movies.title AS movieTitle, Theaters.name AS theater, Times.value AS time
+    SELECT MovieShowings.id, Movies.image AS movieImage, Movies.title AS movieTitle, Theaters.name AS theater, Times.value AS time
     FROM MovieShowings
     INNER JOIN Movies ON MovieShowings.movieid = Movies.movieid
     INNER JOIN Theaters ON MovieShowings.theaterid = Theaters.theaterid

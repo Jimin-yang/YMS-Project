@@ -52,8 +52,6 @@ function App() {
               <Route path="/SelectionPage" component={SelectionPage} />
               <Route path="/PaymentPage" component={PaymentPage} />
               <Route path="/CompletePage" component={CompletePage} />
-              <Route path="/MainPage" component={MainPage} />
-
             </Switch>
           </Router>
         </Paper>

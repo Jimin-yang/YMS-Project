@@ -34,6 +34,29 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
         }
       });
     });
+    // DB에서 상영관 정보 가져오기
+    app.get('/api/theaters', (req, res) => {
+      // 실제로는 DB에서 데이터를 가져오는 로직이 들어가야 합니다.
+      const theatersFromDB = [
+        { theaterid: 11, name: '상영관1' },
+        { theaterid: 12, name: '상영관2' },
+        { theaterid: 13, name: '상영관3' },
+      ];
+      res.json(theatersFromDB);
+    });
+    // DB에서 상영시간 정보 가져오기
+    app.get('/api/times', (req, res) => {
+      // 실제로는 DB에서 데이터를 가져오는 로직이 들어가야 합니다.
+      const timesFromDB = [
+        { timeid: 21, value: '08:00' },
+        { timeid: 22, value: '11:00' },
+        { timeid: 23, value: '14:00' },
+        { timeid: 24, value: '17:00' },
+        { timeid: 25, value: '20:00' },
+        { timeid: 26, value: '23:00' },
+      ];
+      res.json(timesFromDB);
+    });
 
     // 영화 좌석 데이터를 제공하는 엔드포인트
     app.get('/api/seats', (req, res) => {

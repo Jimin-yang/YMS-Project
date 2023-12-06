@@ -12,6 +12,25 @@ const CompletePage = ({ location }) => {
     totalAmount: 0,
   };
 
+  // Destructure the selectedMovie object to get its properties
+  const {
+    movieTitle,
+    theater,
+    time,
+    selectedSeats,
+    childCount,
+    adultCount,
+    totalAmount, // Make sure totalAmount is a property of selectedMovie
+  } = selectedMovie;
+
+  // Assuming you have this function defined somewhere
+  const calculateTotalAmount = () => {
+    // Implement the logic to calculate the total amount
+    // ...
+
+    return totalAmount; // Make sure to return the calculated totalAmount
+  };
+
   useEffect(() => {
     const timerId = setTimeout(() => {
       history.push('/');
@@ -29,21 +48,33 @@ const CompletePage = ({ location }) => {
   );
 
   return (
-    <Box textAlign="center" mt={10} onClick={() => history.push('/')}>
-      <Typography variant="h4" gutterBottom>
-        Payment Complete
+    <div>
+      <Typography variant="h5" gutterBottom>
+        최종 선택 정보
       </Typography>
-      <Typography variant="h6" gutterBottom>
-        Thank you for your purchase!
+      {/* Use the defined variables here */}
+      <Typography variant="body1" paragraph>
+        결제 코드: {selectedMovie.merchantUid} {/* Assuming merchantUid is a property of selectedMovie */}
       </Typography>
-      <Box mt={4}>
-        {renderMovieInfo('Movie', selectedMovie.movieTitle)}
-        {renderMovieInfo('Theater', selectedMovie.theater)}
-        {renderMovieInfo('Time', selectedMovie.time)}
-        {renderMovieInfo('Selected Seats', selectedMovie.selectedSeats.join(', '))}
-        {renderMovieInfo('Total Amount', selectedMovie.totalAmount)}
-      </Box>
-    </Box>
+      <Typography variant="body1" paragraph>
+        영화: {movieTitle}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        상영관: {theater}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        상영시간: {time}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        선택 좌석: {selectedSeats.join(', ')}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        어린이: {childCount}명, 성인: {adultCount}명
+      </Typography>
+      <Typography variant="body1" paragraph>
+        지불 금액: {calculateTotalAmount()}원
+      </Typography>
+    </div>
   );
 };
 

@@ -52,29 +52,50 @@ const SelectionPage = () => {
     const selectedShowing = showings.find(showing => showing.id === showingId);
   
     if (selectedShowing) {
-      const { movieTitle, theater, time } = selectedShowing;
+      const { movieid, theaterid, timeid } = selectedShowing;
   
-      if (movieTitle === '새 영화 추가' && !isDeleting) {
-        setOpenAdd(true);
-      } else {
-        // 여기에서 Payment 정보를 서버에 전송
-        axios.post('http://localhost:3001/api/payment', {
-          movieTitle,
-          theater,
-          time,
-        })
-        .then(response => {
-          console.log(response.data.message);
-          // Payment 정보가 성공적으로 서버에 전송되면 다음 페이지로 이동 또는 추가적인 작업 수행
+      axios.get(`http://localhost:3001/api/movies/${movieid}`)
+        .then(movieResponse => {
+          const movieTitle = movieResponse.data.title;
+  
+          axios.get(`http://localhost:3001/api/theaters/${theaterid}`)
+            .then(theaterResponse => {
+              const theaterName = theaterResponse.data.name;
+  
+              axios.get(`http://localhost:3001/api/times/${timeid}`)
+                .then(timeResponse => {
+                  const timeValue = timeResponse.data.value;
+  
+                  if (movieTitle === '새 영화 추가' && !isDeleting) {
+                    setOpenAdd(true);
+                  } else if (isAdmin) {
+                    history.push({
+                      pathname: '/MovieDetailsPage',
+                      state: { showingId, isAdmin: true },
+                    });
+                  } else if (isDeleting) {
+                    setSelectedMovie(showingId);
+                    setOpenDelete(true);
+                  } else {
+                    history.push({
+                      pathname: '/MovieDetailsPage',
+                      state: { movieTitle, theaterName, timeValue },
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.error('Error fetching time: ', error);
+                });
+            })
+            .catch(error => {
+              console.error('Error fetching theater: ', error);
+            });
         })
         .catch(error => {
-          console.error('Error sending payment information: ', error);
+          console.error('Error fetching movie: ', error);
         });
-      }
     }
   };
-  
-  
   
   return (
     <Box className={classes.cards}>

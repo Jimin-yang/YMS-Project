@@ -23,12 +23,12 @@ const PaymentPage = ({ location }) => {
     const childTotal = childPrice * (childCount || 0);
     const adultTotal = adultPrice * (adultCount || 0);
     const totalCount = childCount + adultCount;
-    
+
     const theaterNumber = parseInt(theater.slice(-1), 10); // 문자열 끝에서 숫자만 추출하여 theaterNumber에 저장
-    
+
     if (theaterNumber === 3) {
       console.log('Theater is 3');
-      return childTotal + adultTotal + (8000 * totalCount);
+      return childTotal + adultTotal + 8000 * totalCount;
     } else {
       console.log('Theater is not 3');
       return childTotal + adultTotal;
@@ -36,7 +36,11 @@ const PaymentPage = ({ location }) => {
   };
 
   const [impLoaded, setImpLoaded] = useState(false);
-  let IMP; // IMP 모듈 전역 변수로 선언
+  const [merchantUid, setMerchantUid] = useState('');
+
+  useEffect(() => {
+    setMerchantUid(generateRandomString()); // 페이지 로드 시 랜덤 merchant_uid 생성하여 상태에 저장
+  }, []);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -48,39 +52,57 @@ const PaymentPage = ({ location }) => {
       setImpLoaded(true); // 모듈이 로드되고 초기화됨을 나타내는 상태 변경
     };
     document.head.appendChild(script);
-  
+
     return () => {
       document.head.removeChild(script);
     };
   }, []);
-  
+
+  const generateRandomString = () => {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = 'test_';
+
+    for (let i = 0; i < 8; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
+
+    return result;
+  };
+
   const requestPay = () => {
     if (!impLoaded) {
       alert('결제 모듈을 불러오는 중입니다. 잠시만 기다려주세요.');
       return;
     }
-  
+
     const amount = calculateTotalAmount(); // 총 결제 금액 계산
-    window.IMP.request_pay({
-      pg: 'kakaopay',
-      pay_method: 'card',
-      merchant_uid: 'test_lp8h3p60',
-      name: '영화 표',
-      amount: amount,
-      buyer_tel: '012-3456-7890',
-    }, (rsp) => {
-      if (rsp.success) {
-        history.push('/CompletePage');
-      } else {
-        alert('결제에 실패하였습니다.');
+    window.IMP.request_pay(
+      {
+        pg: 'kakaopay',
+        pay_method: 'card',
+        merchant_uid: merchantUid, // 랜덤 merchant_uid 값 사용
+        name: '영화 표',
+        amount: amount,
+        buyer_tel: '012-3456-7890',
+      },
+      (rsp) => {
+        if (rsp.success) {
+          history.push('/CompletePage');
+        } else {
+          alert('결제에 실패하였습니다.');
+        }
       }
-    });
-  };  
+    );
+  };
 
   return (
     <div>
       <Typography variant="h5" gutterBottom>
         최종 선택 정보
+      </Typography>
+      <Typography variant="body1" paragraph>
+        결제 코드: {merchantUid} {/* merchantUid 출력 */}
       </Typography>
       <Typography variant="body1" paragraph>
         영화: {movieTitle}

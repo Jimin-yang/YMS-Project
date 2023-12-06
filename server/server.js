@@ -68,6 +68,39 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
       res.status(200).json({ message: `Updated movie with title: ${movieTitleToUpdate}` });
     });
 
+    // Payment 정보를 Receipt 테이블에 저장하는 엔드포인트
+    app.post('/api/payment', (req, res) => {
+      const {
+        movieTitle,
+        theater,
+        time,
+        selectedSeats,
+        childCount,
+        adultCount,
+        // 추가적으로 필요한 데이터가 있다면 이곳에 추가
+      } = req.body;
+    
+      // 여기에서 Receipt 테이블에 데이터를 삽입하는 쿼리를 작성
+      const insertQuery = `
+        INSERT INTO Receipt (movieTitle, theater, showTime, selectedSeats, childCount, adultCount)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+    
+      db.run(
+        insertQuery,
+        [movieTitle, theater, time, selectedSeats.join(', '), childCount, adultCount],
+        function (err) {
+          if (err) {
+            console.error(err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
+          } else {
+            console.log(`A row has been inserted with rowid ${this.lastID}`);
+            res.status(200).json({ message: 'Payment information saved successfully' });
+          }
+        }
+      );
+    });
+
     app.use(express.static(path.join(__dirname, '../build')));
 
     app.get('*', (req, res) => {

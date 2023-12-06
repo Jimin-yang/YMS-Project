@@ -10,9 +10,16 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    color: 'black', // 영화 상세 정보 텍스트의 색상을 검정으로 설정
   },
-  buttonContainer: {
-    marginTop: theme.spacing(3),
+  center: {
+    textAlign: 'center',
+  },
+  navy: {
+    color: 'navy',
+  },
+  button: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -129,13 +136,13 @@ function MovieDetailsPage() {
   };
 
   return (
-    <Box className={styles.root}>
-      <Typography variant="h3" component="h3" className={`${styles.center} ${styles.navy}`} gutterBottom>
-        영화 상세 정보
-      </Typography>
-      <Typography variant="h4" component="h4" className={`${styles.center} ${styles.navy}`} gutterBottom>
-        {movieTitle}
-      </Typography>
+    <Box className={classes.root}>
+    <Typography variant="h3" component="h3" className={`${classes.center} ${classes.navy}`} gutterBottom>
+      영화 상세 정보
+    </Typography>
+    <Typography variant="h4" component="h4" className={`${classes.center} ${classes.navy}`} gutterBottom>
+      Title : {movieTitle}
+    </Typography>
       <Typography variant="h6" component="h6" className={`${styles.center} ${styles.navy}`} gutterBottom>
         상영관 선택
       </Typography>

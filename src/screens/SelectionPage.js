@@ -48,8 +48,13 @@ const SelectionPage = () => {
       });
   }, []);
   
-  const handleMovieClick = (showingId) => {
+  const handleMovieClick = (showingId, movieTitle, theaterName, timeValue) => {
     const selectedShowing = showings.find(showing => showing.id === showingId);
+
+    history.push({
+      pathname: '/MovieDetailsPage',
+      state: { movieTitle, theaterName, timeValue },
+    });
   
     if (selectedShowing) {
       const { movieid, theaterid, timeid } = selectedShowing;
@@ -99,14 +104,14 @@ const SelectionPage = () => {
   
   return (
     <Box className={classes.cards}>
-      <Box className={classes.main}>
-        <Box className={classes.cards}>
-          {showings.map((showing) => (
-            <Card
-              key={showing.id}
-              className={`${classes.card} ${showing.movieTitle === '새 영화 추가' ? classes.adminButton : ''}`}
-              onClick={() => handleMovieClick(showing.id)}
-            >
+    <Box className={classes.main}>
+      <Box className={classes.cards}>
+        {showings.map((showing) => (
+          <Card
+            key={showing.id}
+            className={`${classes.card} ${showing.movieTitle === '새 영화 추가' ? classes.adminButton : ''}`}
+            onClick={() => handleMovieClick(showing.id, showing.movieTitle, showing.theater, showing.time)}
+          >
               <CardActionArea>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={4}>

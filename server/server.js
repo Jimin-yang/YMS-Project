@@ -5,7 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 const models = require('../models'); // models 모듈을 가져오는 부분에서 오류 발생 가능성이 있습니다. 정의된 모듈이 아니라면 수정이 필요합니다.
 
 const app = express();
-app.use(cors());
+app.use(express.json());
 const PORT = process.env.PORT || 3001;
 const dbPath = '../DataBase/movieDB.db';
 
@@ -44,18 +44,30 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
       ];
       res.json(theatersFromDB);
     });
+
+    app.get('/api/paid-seats', (req, res) => {
+  db.all('SELECT * FROM Seats WHERE isPaid = 1', [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: '내부 서버 오류' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
     // DB에서 상영시간 정보 가져오기
     app.get('/api/times', (req, res) => {
-      // 실제로는 DB에서 데이터를 가져오는 로직이 들어가야 합니다.
-      const timesFromDB = [
-        { timeid: 21, value: '08:00' },
-        { timeid: 22, value: '11:00' },
-        { timeid: 23, value: '14:00' },
-        { timeid: 24, value: '17:00' },
-        { timeid: 25, value: '20:00' },
-        { timeid: 26, value: '23:00' },
-      ];
-      res.json(timesFromDB);
+      const query = 'SELECT * FROM Times'; // Times 테이블에서 시간 정보를 가져오는 쿼리
+    
+      db.all(query, [], (err, rows) => {
+        if (err) {
+          console.error(err.message);
+          res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+          res.json(rows); // 쿼리로부터 가져온 시간 정보를 JSON으로 응답
+        }
+      });
     });
 
     // 영화 좌석 데이터를 제공하는 엔드포인트
@@ -91,7 +103,7 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
       res.status(200).json({ message: `Updated movie with title: ${movieTitleToUpdate}` });
     });
 
-    // Payment 정보를 Receipt 테이블에 저장하는 엔드포인트
+    // 결제 완료 후 좌석 상태 업데이트
     app.post('/api/payment', (req, res) => {
       const {
         movieTitle,
@@ -100,10 +112,8 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
         selectedSeats,
         childCount,
         adultCount,
-        // 추가적으로 필요한 데이터가 있다면 이곳에 추가
       } = req.body;
     
-      // 여기에서 Receipt 테이블에 데이터를 삽입하는 쿼리를 작성
       const insertQuery = `
         INSERT INTO Receipt (movieTitle, theater, showTime, selectedSeats, childCount, adultCount)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -117,12 +127,65 @@ let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
             console.error(err.message);
             res.status(500).json({ error: 'Internal Server Error' });
           } else {
-            console.log(`A row has been inserted with rowid ${this.lastID}`);
-            res.status(200).json({ message: 'Payment information saved successfully' });
+            // 결제가 완료되면 해당 좌석의 isPaid 필드를 true로 업데이트
+            const updateSeatsQuery = `
+              UPDATE Seats
+              SET isPaid = true
+              WHERE id IN (${selectedSeats.join(', ')})
+            `;
+            db.run(updateSeatsQuery, function (err) {
+              if (err) {
+                console.error(err.message);
+                res.status(500).json({ error: 'Internal Server Error' });
+              } else {
+                console.log(`A row has been inserted with rowid ${this.lastID}`);
+                res.status(200).json({ message: 'Payment information saved successfully' });
+              }
+            });
           }
         }
       );
     });
+
+// 좌석 선택 시 결제 상태 확인
+app.get('/api/seats', (req, res) => {
+  db.all('SELECT * FROM Seats WHERE isPaid = false', [], (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+    // Payment 정보를 Receipt 테이블에 저장하는 엔드포인트
+app.post('/api/payment', (req, res) => {
+  const {
+    movieTitle,
+    theater,
+    time,
+    selectedSeats,
+    childCount,
+    adultCount,
+    merchantUid, // 결제 코드 추가
+  } = req.body;
+
+  // Receipt 테이블에 데이터를 삽입하는 쿼리
+  const insertQuery = `
+    INSERT INTO Receipt (movieTitle, theater, showTime, selectedSeats, childCount, adultCount, merchantUid)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.run(insertQuery, [movieTitle, theater, time, selectedSeats, childCount, adultCount, merchantUid], function(err) {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.json({ message: 'Payment information saved successfully', id: this.lastID });
+    }
+  });
+});
 
     app.use(express.static(path.join(__dirname, '../build')));
 

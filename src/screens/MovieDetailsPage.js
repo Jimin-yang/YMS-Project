@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';  
-import Typography from '@material-ui/core/Typography';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Button,
+  FormControl,  
+  FormControlLabel,
+  Checkbox,
+  Radio,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControlLabel, Checkbox, Radio, FormControl, FormGroup } from '@material-ui/core'; // 추가
+import {  } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,13 +63,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function MovieDetailsPage() {
+  const storedTheaters = localStorage.getItem('selectedTheaters');
+  const storedTimes = localStorage.getItem('selectedTime');
+
   const classes = useStyles();
   const history = useHistory();
   const location = useLocation();
+  const { showingId } = useParams();
+
+  // 상태 변수들 선언
   const [selectedTheaters, setSelectedTheaters] = useState([]);
   const [selectedTime, setSelectedTime] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  // movieTitle을 location.state에서 받아옵니다.
   const movieTitle = location.state ? location.state.movieTitle : 'Unknown Movie';
   const [styles, setStyles] = useState([]);
   const movie = location.state ? location.state.movie : null;
@@ -81,10 +92,9 @@ function MovieDetailsPage() {
     { title: 'Pulp Fiction', image: 'path_to_image5', theater: ['상영관2'], time: ['14:00'] },
   ];
 
-  const allTheaters = ['상영관1', '상영관2', '상영관3'];
-  const allTimes = ['08:00', '11:00', '14:00', '17:00', '20:00', '23:00'];
+  const allTheatersAdmin = ['상영관1', '상영관2', '상영관3'];
+  const allTimesAdmin = ['08:00', '11:00', '14:00', '17:00', '20:00', '23:00'];
 
-  // 상영관별 좌석 수 정보
   const theaterSeats = {
     '상영관1': 20,
     '상영관2': 30,
@@ -92,88 +102,121 @@ function MovieDetailsPage() {
   };
 
   const [movies, setMovies] = useState([]);
-  const [theaters, setTheaters] = useState(['상영관1', '상영관2', '상영관3']);
-  const [times, setTimes] = useState(['08:00', '11:00', '14:00', '17:00', '20:00', '23:00']);
+  const [allTheaters, setAllTheaters] = useState(['상영관1', '상영관2', '상영관3']);
+  const [allTimes, setAllTimes] = useState(['08:00', '11:00', '14:00', '17:00', '20:00', '23:00']);
+  const [selectedTheatersAdmin, setSelectedTheatersAdmin] = useState([]);
+  const [selectedTimeAdmin, setSelectedTimeAdmin] = useState([]);
 
   useEffect(() => {
-    const storedMovies = localStorage.getItem('movies');
-    if (storedMovies) {
-      const parsedMovies = JSON.parse(storedMovies);
-      setMovies(parsedMovies);
-      const foundMovie = parsedMovies.find(movie => movie.title === movieTitle);
-      if (foundMovie && Array.isArray(foundMovie.theater) && Array.isArray(foundMovie.time)) {
-        setMovies(foundMovie);
-        setSelectedTheaters([foundMovie.theater[0]]);
-        setSelectedTime([foundMovie.time[0]]);
-        setTheaters(foundMovie.theater);
-        setTimes(foundMovie.time);
-      }
-    } else {
-      setMovies(initialMovies);
-      localStorage.setItem('movies', JSON.stringify(initialMovies));
-      const foundMovie = initialMovies.find(movie => movie.title === movieTitle);
-      if (foundMovie && Array.isArray(foundMovie.theater) && Array.isArray(foundMovie.time)) {
-        setMovies(foundMovie);
-        setSelectedTheaters([foundMovie.theater[0]]);
-        setSelectedTime([foundMovie.time[0]]);
-        setTheaters(foundMovie.theater);
-        setTimes(foundMovie.time);
-      }
+    // 저장된 상영관과 시간이 있다면 해당 값을 상태에 설정
+    if (storedTheaters) {
+      setSelectedTheaters(JSON.parse(storedTheaters));
     }
-  }, [movieTitle]);
+    if (storedTimes) {
+      setSelectedTime(JSON.parse(storedTimes));
+    }
+  }, []);
 
-  const handleTheaterChange = (event) => {
+  useEffect(() => {
+    // isAdmin 상태를 location.state에서 받아옴
+    if (location.state && location.state.isAdmin !== undefined) {
+      setIsAdmin(location.state.isAdmin);
+    }
+    // ... 나머지 useEffect 로직
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      // isAdmin이 false일 때 관리자가 선택한 값을 일반 사용자에게 보여주기
+      setSelectedTheaters(selectedTheatersAdmin); // selectedTheaters 초기화
+      setSelectedTime(selectedTimeAdmin); // selectedTime 초기화
+    }
+  }, [isAdmin, selectedTheatersAdmin, selectedTimeAdmin]);
+  
+  // 두 번째 useEffect 수정
+  useEffect(() => {
     if (isAdmin) {
-      setSelectedTheaters((prev) =>
-        event.target.checked ? [...prev, event.target.value] : prev.filter((theater) => theater !== event.target.value)
-      );
+      // isAdmin이 true일 때 모든 상영관과 시간을 선택지로 설정
+      setAllTheaters(allTheatersAdmin);
+      setAllTimes(allTimesAdmin);
     } else {
-      setSelectedTheaters([event.target.value]);
+      // isAdmin이 false일 때 관리자가 선택한 값을 일반 사용자에게 보여주기
+      setSelectedTheatersAdmin(selectedTheaters);
+      setSelectedTimeAdmin(selectedTime);
+    }
+  }, [isAdmin]);
+
+  const [selectedTheaterUser, setSelectedTheaterUser] = useState('');
+  const [selectedTimeUser, setSelectedTimeUser] = useState('');
+  
+  // 상영관 선택 부분 수정
+  const handleTheaterChange = (event, theater) => {
+    const { checked } = event.target;
+
+    if (isAdmin) {
+      const updatedTheaters = checked
+        ? [...selectedTheatersAdmin, theater]
+        : selectedTheatersAdmin.filter((selected) => selected !== theater);
+      setSelectedTheatersAdmin(updatedTheaters);
+    } else {
+      // 사용자는 하나의 상영관만 선택하도록 설정
+      setSelectedTheaterUser(checked ? theater : '');
     }
   };
-  
-  const handleTimeChange = (event) => {
+
+  // 상영시간 선택 부분 수정
+  const handleTimeChange = (event, time) => {
+    const { checked } = event.target;
+
     if (isAdmin) {
-      setSelectedTime((prev) =>
-        event.target.checked ? [...prev, event.target.value] : prev.filter((time) => time !== event.target.value)
-      );
+      const updatedTimes = checked
+        ? [...selectedTimeAdmin, time]
+        : selectedTimeAdmin.filter((selected) => selected !== time);
+      setSelectedTimeAdmin(updatedTimes);
     } else {
-      setSelectedTime([event.target.value]);
+      // 사용자는 하나의 상영시간만 선택하도록 설정
+      setSelectedTimeUser(checked ? time : '');
     }
   };
-  
-  const isBothSelected = selectedTheaters.length > 0 && selectedTime.length > 0;
+
+  const isBothSelected = isAdmin
+    ? selectedTheatersAdmin.length > 0 && selectedTimeAdmin.length > 0
+    : !!selectedTheaterUser && !!selectedTimeUser;
 
   const handleUpdateClick = () => {
-    const newMovies = movies.map(movie => movie.title === movieTitle ? { ...movie, theater: selectedTheaters, time: selectedTime } : movie);
-    setMovies(newMovies);
-    localStorage.setItem('movies', JSON.stringify(newMovies));
+    setAllTheaters(selectedTheatersAdmin);
+    setAllTimes(selectedTimeAdmin);
+
+    localStorage.setItem('selectedTheaters', JSON.stringify(selectedTheatersAdmin));
+    localStorage.setItem('selectedTime', JSON.stringify(selectedTimeAdmin));
+
     alert('상영관과 상영시간이 수정되었습니다.');
     history.goBack();
   };
 
   const handleConfirmClick = () => {
-    
-    if (!isBothSelected) {
+    if (!selectedTheaterUser || !selectedTimeUser) {
       alert('상영관과 상영시간을 모두 선택해주세요.');
       return;
     }
 
     const selectedSeats = seats.filter((seat) => seat.selected).map((seat) => seat.id);
-    const selectedTheater = selectedTheaters.join(', ');
-  
-    alert(`영화: ${movieTitle}\n상영관: ${selectedTheater}\n상영시간: ${selectedTime}`);
+    const selectedTheater = isAdmin ? selectedTheatersAdmin.join(', ') : selectedTheaterUser;
+    const selectedTimeValue = isAdmin ? selectedTimeAdmin : selectedTimeUser;
+
+    localStorage.setItem('selectedTheaters', JSON.stringify(selectedTheater));
+    localStorage.setItem('selectedTime', JSON.stringify(selectedTimeValue));
+
     history.push({
       pathname: '/CinemaSeat',
       state: {
         seats: selectedSeats,
         movieTitle: movieTitle,
         theater: selectedTheater,
-        time: selectedTime,
+        time: selectedTimeValue,
       },
-    });  
+    });
   };
-  
 
   return (
     <Box className={classes.root}>
@@ -187,35 +230,27 @@ function MovieDetailsPage() {
         상영관 선택
       </Typography>
       <div className={`${classes.checkboxContainer} ${classes.spaceBetween}`}>
-        {isAdmin ? allTheaters.map((theater, index) => (
+        {allTheaters.map((theater, index) => (
           <FormControlLabel
             key={index}
-            control={
+            value={theater}
+            control={isAdmin ? (
               <Checkbox
-                checked={selectedTheaters.includes(theater)}
-                onChange={handleTheaterChange}
-                value={theater}
-                name="theater"
+                checked={selectedTheatersAdmin.includes(theater)}
+                onChange={(event) => handleTheaterChange(event, theater)}
                 color="primary"
+                disabled={!isAdmin}
               />
-            }
-            label={theater}
-            className={classes.checkbox} // 변경된 스타일 클래스 적용
-          />
-        )) : theaters.map((theater, index) => (
-          <FormControlLabel
-            key={index}
-            control={
+            ) : (
               <Radio
-                checked={selectedTheaters.includes(theater)}
-                onChange={handleTheaterChange}
-                value={theater}
-                name="theater"
+                checked={selectedTheaterUser === theater}
+                onChange={(event) => handleTheaterChange(event, theater)}
                 color="primary"
+                disabled={isAdmin}
               />
-            }
+            )}
             label={theater}
-            className={classes.checkbox} // 변경된 스타일 클래스 적용
+            className={classes.checkbox}
           />
         ))}
       </div>
@@ -224,50 +259,51 @@ function MovieDetailsPage() {
       </Typography>
       <div className={classes.checkboxContainer}>
         <FormControl component="fieldset">
-          <FormGroup row>
-            {isAdmin ? allTimes.map((time, index) => (
+          <div className={`${classes.checkboxContainer} ${classes.spaceBetween}`}>
+            {allTimes.map((time, index) => (
               <FormControlLabel
                 key={index}
-                control={
+                value={time}
+                control={isAdmin ? (
                   <Checkbox
-                    checked={selectedTime.includes(time)}
-                    onChange={handleTimeChange}
-                    value={time}
-                    name="time"
+                    checked={selectedTimeAdmin.includes(time)}
+                    onChange={(event) => handleTimeChange(event, time)}
                     color="primary"
+                    disabled={!isAdmin}
                   />
-                }
-                label={time}
-                className={classes.checkbox}
-                classes={{ label: classes.label }}
-              />
-            )) : times.map((time, index) => (
-              <FormControlLabel
-                key={index}
-                control={
+                ) : (
                   <Radio
-                    checked={selectedTime.includes(time)}
-                    onChange={handleTimeChange}
-                    value={time}
-                    name="time"
+                    checked={selectedTimeUser === time}
+                    onChange={(event) => handleTimeChange(event, time)}
                     color="primary"
+                    disabled={isAdmin}
                   />
-                }
+                )}
                 label={time}
                 className={classes.checkbox}
                 classes={{ label: classes.label }}
               />
             ))}
-          </FormGroup>
+          </div>
         </FormControl>
       </div>
       <Box display="flex" justifyContent="flex-end" className={classes.marginTop}>
         {isAdmin ? (
-          <Button variant="contained" color="primary" onClick={handleUpdateClick} className={`${classes.button} ${classes.confirmButton}`}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUpdateClick}
+            className={`${classes.button} ${classes.confirmButton}`}
+          >
             수정
           </Button>
         ) : (
-          <Button variant="contained" color="primary" onClick={handleConfirmClick} className={`${classes.button} ${classes.confirmButton}`}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleConfirmClick}
+            className={`${classes.button} ${classes.confirmButton}`}
+          >
             확인
           </Button>
         )}

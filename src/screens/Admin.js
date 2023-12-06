@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -8,148 +8,68 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
-  CardActions,
   Button,
   Grid,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-  updateButton: {
+  backButton: {
     position: 'absolute',
-    top: '30px',
-    right: '30%',
-    borderRadius: '20px',
-    padding: '5px 10px',
-    fontSize: '14px',
-    fontWeight: 'bold',
-    zIndex: '1',
-  }, 
+    top: theme.spacing(2),
+    right: theme.spacing(2),
+    zIndex: 9999,
+  },
 }));
 
 const Admin = () => {
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
-  const isAdmin = location.state?.isAdmin;
-  const isDeleting = location.state?.isDeleting;
 
-  const [password, setPassword] = useState('');
-  const correctPassword = 'admin123';
-  const [openAdd, setOpenAdd] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [newMovieTitle, setNewMovieTitle] = useState('');
-  const [newMovieImage, setNewMovieImage] = useState('');
-  const [newMovieTheater, setNewMovieTheater] = useState('');
-  const [newMovieTime, setNewMovieTime] = useState('');
-  const [selectedMovie, setSelectedMovie] = useState(null);
-
-  const [movies, setMovies] = useState([]);
   const [showings, setShowings] = useState([]);
 
-  const fetchData = () => {
+  useEffect(() => {
+    // 서버에서 영화 선택 페이지 데이터를 가져옵니다.
     axios.get('http://localhost:3001/api/selection-data')
       .then(response => {
+        // 가져온 데이터를 상태로 설정합니다.
         setShowings(response.data);
       })
       .catch(error => {
         console.error('Error fetching selection data: ', error);
       });
-  };
-  
-  useEffect(() => {
-    fetchData();
   }, []);
-  
-  const handleMovieClick = (showingId) => {
-    const selectedShowing = showings.find(showing => showing.id === showingId);
-  
-    if (selectedShowing) {
-      const { movieid, theaterid, timeid } = selectedShowing;
-  
-      axios.get(`http://localhost:3001/api/movies/${movieid}`)
-        .then(movieResponse => {
-          const movieTitle = movieResponse.data.title;
-  
-          axios.get(`http://localhost:3001/api/theaters/${theaterid}`)
-            .then(theaterResponse => {
-              const theaterName = theaterResponse.data.name;
-  
-              axios.get(`http://localhost:3001/api/times/${timeid}`)
-                .then(timeResponse => {
-                  const timeValue = timeResponse.data.value;
-  
-                  if (movieTitle === '새 영화 추가' && !isDeleting) {
-                    setOpenAdd(true);
-                  } else if (isAdmin) {
-                    history.push({
-                      pathname: '/MovieDetailsPage',
-                      state: { showingId, isAdmin: true },
-                    });
-                  } else if (isDeleting) {
-                    setSelectedMovie(showingId);
-                    setOpenDelete(true);
-                  } else {
-                    history.push({
-                      pathname: '/MovieDetailsPage',
-                      state: { movieTitle, theaterName, timeValue },
-                    });
-                  }
-                })
-                .catch(error => {
-                  console.error('Error fetching time: ', error);
-                });
-            })
-            .catch(error => {
-              console.error('Error fetching theater: ', error);
-            });
-        })
-        .catch(error => {
-          console.error('Error fetching movie: ', error);
-        });
-    }
-  };
 
-  const handleDeleteMovie = (showingId, externalModule) => {
-    axios.delete(`http://localhost:3001/api/movies/${showingId}`)
-    .then(response => {
-      console.log(`Movie with ID ${showingId} deleted successfully.`);
-    })
-    .catch(error => {
-      console.error(`Error deleting movie with ID ${showingId}:`, error);
+  const handleMovieUpdate = (showingId, movieTitle) => {
+    // 수정 버튼 클릭 시 무비 디테일즈 페이지로 이동합니다.
+    history.push({
+      pathname: `/MovieDetailsPage/${showingId}`,
+      state: { movieTitle, isAdmin: true }
     });
   };
-
-  const handleUpdate = async (showingId) => {
-    const updatedData = {}; // 원하는 값을 할당하세요.
-  
-    try {
-      const response = await axios.put(`http://localhost:3001/api/movies/${showingId}`, updatedData);
-      console.log(`Movie with ID ${showingId} updated successfully.`);
-      // 업데이트 성공시 처리
-  
-      // 데이터를 다시 받아오는 함수 호출
-      fetchData();
-    } catch (error) {
-      console.error(`Error updating movie with ID ${showingId}:`, error);
-      // 에러 발생시 처리
-    }
+  const handleGoBack = () => {
+    // 첫 화면으로 이동
+    history.push('/');
   };
-  
+
   return (
     <Box className={classes.cards}>
+      <div className="MuiContainer-root MuiContainer-maxWidthSm" style={{ position: 'relative' }}>
+      <Button variant="contained" color="primary" className={classes.backButton} onClick={handleGoBack}>
+        되돌아가기
+      </Button>
+      </div>
       <Box className={classes.main}>
         <Box className={classes.cards}>
           {showings.map((showing) => (
             <Card
               key={showing.id}
               className={`${classes.card} ${showing.movieTitle === '새 영화 추가' ? classes.adminButton : ''}`}
-              onClick={() => handleMovieClick(showing.id)}
             >
-              <CardActionArea>
+              <CardActionArea onClick={() => handleMovieUpdate(showing.id, showing.movieTitle)}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={4}>
-                  <CardMedia
+                    <CardMedia
                       className={classes.media}
                       title={showing.movieTitle}
                       image={showing.movieImage}
@@ -158,7 +78,7 @@ const Admin = () => {
                       src={showing.movieImage}
                       alt={showing.movieTitle}
                       className={classes.movieImage}
-                      style={{ width: '200px', height: 'auto' }} // 이미지 크기 조정 스타일 적용
+                      style={{ width: '200px', height: 'auto' }}
                     />
                   </Grid>
                   <Grid item xs={8}>
@@ -175,13 +95,7 @@ const Admin = () => {
                             {`상영시간: ${showing.time}`}
                           </Typography>
                         </div>
-                        <CardActions>
-                          <Button size="small" color="secondary" onClick={() => handleDeleteMovie(showing.id)}>
-                            삭제
-                          </Button>
-                        </CardActions>
                       </div>
-                      <button>수정</button>
                     </CardContent>
                   </Grid>
                 </Grid>
@@ -189,14 +103,6 @@ const Admin = () => {
             </Card>
           ))}
         </Box>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => handleUpdate(selectedMovie)}
-          className={classes.updateButton}
-        >
-          업데이트
-        </Button>
       </Box>
     </Box>
   );

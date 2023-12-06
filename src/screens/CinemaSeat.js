@@ -44,6 +44,15 @@
 
   
     useEffect(() => {
+      axios.get('http://localhost:3001/api/paid-seats')
+      .then(response => {
+        setSeats(response.data);
+      })
+      .catch(error => {
+        console.error('데이터 가져오기 오류: ', error);
+      });
+    
+
       if (selectedMovieTitle) {
         setMovieTitle(selectedMovieTitle);
       }
@@ -56,8 +65,15 @@
     }, [selectedMovieTitle, selectedTheater, selectedTime]);
 
     const handleSeatClick = (seat) => {
+      const isPaidSeat = seats.find((paidSeat) => paidSeat.id === seat && paidSeat.isPaid);
+      
+      if (isPaidSeat) {
+        // 이미 결제된 좌석은 선택할 수 없도록 처리
+        return;
+      }
+      
       if (selectedSeats.includes(seat)) {
-        setSelectedSeats(selectedSeats.filter(selectedSeat => selectedSeat !== seat));
+        setSelectedSeats(selectedSeats.filter((selectedSeat) => selectedSeat !== seat));
       } else {
         setSelectedSeats([...selectedSeats, seat]);
       }
@@ -115,25 +131,27 @@
     history.goBack();
   };
 
-  const renderSeat = (seatNumber) => {
+  const renderSeats = () => {
+    const renderedSeats = [];
+    for (let i = 1; i <= TOTAL_SEATS; i++) {
+      const isPaidSeat = seats.find((paidSeat) => paidSeat.id === i && paidSeat.isPaid);
+      renderedSeats.push(renderSeat(i, isPaidSeat));
+    }
+    return renderedSeats;
+  };
+  
+  const renderSeat = (seatNumber, isPaidSeat) => {
     const isSelected = selectedSeats.includes(seatNumber);
+    
     return (
       <div
         key={seatNumber}
-        className={`seat ${isSelected ? 'selected' : ''}`}
+        className={`seat ${isSelected ? 'selected' : ''} ${isPaidSeat ? 'paid' : ''}`}
         onClick={() => handleSeatClick(seatNumber)}
       >
         {isSelected ? 'X' : seatNumber}
       </div>
     );
-  };
-
-  const renderSeats = () => {
-    const seats = [];
-    for (let i = 1; i <= TOTAL_SEATS; i++) {
-      seats.push(renderSeat(i));
-    }
-    return seats;
   };
 
   const renderPersonButtons = (type) => {

@@ -1,33 +1,25 @@
-/* 
-11/15 
-useEffect, setTimeout 함수 -> useCallback, useRef 으로 변경
-*/
-
-
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box, Typography } from '@material-ui/core';
 
 const CompletePage = ({ location }) => {
   const history = useHistory();
-  const movieTitle = location.state?.movieTitle || 'Unknown Movie';
-  const theater = location.state?.theater || 'Unknown Theater';
-  const time = location.state?.time || 'Unknown Time';
-  const selectedSeats = location.state?.selectedSeats || [];
-  const totalAmount = location.state?.totalAmount || 0;
-
-  const handleClick = useCallback(() => {
-    history.push('/');
-  }, [history]);
-
-  const timerRef = useRef(null);
+  const selectedMovie = location.state?.selectedMovie || {
+    movieTitle: 'Unknown Movie',
+    theater: 'Unknown Theater',
+    time: 'Unknown Time',
+    selectedSeats: [],
+    totalAmount: 0,
+  };
 
   useEffect(() => {
-    timerRef.current = setTimeout(() => {
+    const timerId = setTimeout(() => {
       history.push('/');
-    }, 15000); // 15초 후에 홈페이지로 이동
+    }, 15000);
 
-    return () => clearTimeout(timerRef.current); // 컴포넌트가 언마운트되면 타이머를 제거합니다.
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [history]);
 
   const renderMovieInfo = (label, value) => (
@@ -37,7 +29,7 @@ const CompletePage = ({ location }) => {
   );
 
   return (
-    <Box textAlign="center" mt={10} onClick={handleClick}>
+    <Box textAlign="center" mt={10} onClick={() => history.push('/')}>
       <Typography variant="h4" gutterBottom>
         Payment Complete
       </Typography>
@@ -45,11 +37,11 @@ const CompletePage = ({ location }) => {
         Thank you for your purchase!
       </Typography>
       <Box mt={4}>
-        {renderMovieInfo('Movie', movieTitle)}
-        {renderMovieInfo('Theater', theater)}
-        {renderMovieInfo('Time', time)}
-        {renderMovieInfo('Selected Seats', selectedSeats.join(', '))}
-        {renderMovieInfo('Total Amount', totalAmount)}
+        {renderMovieInfo('Movie', selectedMovie.movieTitle)}
+        {renderMovieInfo('Theater', selectedMovie.theater)}
+        {renderMovieInfo('Time', selectedMovie.time)}
+        {renderMovieInfo('Selected Seats', selectedMovie.selectedSeats.join(', '))}
+        {renderMovieInfo('Total Amount', selectedMovie.totalAmount)}
       </Box>
     </Box>
   );

@@ -181,6 +181,7 @@ const Admin = () => {
                           </Button>
                         </CardActions>
                       </div>
+                      <button>수정</button>
                     </CardContent>
                   </Grid>
                 </Grid>

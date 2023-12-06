@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Card, Box, Typography, Button } from '@material-ui/core';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import { useStyles } from '../styles';
+import backgroundImage from './cgvimg1.png'; // 이미지 파일 경로
 
 function MainPage() {
     const styles = useStyles();
@@ -18,7 +19,7 @@ function MainPage() {
 
     return (
         <Card>
-            <Box className={[styles.root, styles.lightgreen]} position="relative">
+            <Box className={[styles.root, styles.lightgreen]} position="relative" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', height: '100vh' }}>
                 <Button
                     variant="outlined"
                     color="primary"
@@ -44,14 +45,14 @@ function MainPage() {
                     onClick={handleSelectionPage}
                 >
                     <Box className={[styles.main, styles.center]}>
-                        <Typography component="h5" variant="h5" style={{ fontFamily: 'BMEULJIRO, sans-serif' }}>
-                            환영합니다! <br />
+                        <Typography component="h5" variant="h5" style={{ fontFamily: 'BMEULJIRO, sans-serif',fontWeight: 'bold' }}>
+                             <br />
                         </Typography>
-                        <Typography component="h2" variant="h2" style={{ fontFamily: 'BMEULJIRO, sans-serif', textAlign: 'center' }}>
+                        <Typography component="h2" variant="h2" style={{ fontFamily: 'BMEULJIRO, sans-serif', textAlign: 'center', color:'white',fontWeight: 'bold' }}>
                             <br /> 오늘은 <br /> 어떤 영화를 볼까요? <br /> <br />
                         </Typography>
                         <TouchAppIcon className={styles.appIcon}></TouchAppIcon>
-                        <Typography component="h6" variant="h6" style={{ fontFamily: 'BMEULJIRO, sans-serif', textAlign: 'center' }}>
+                        <Typography component="h6" variant="h6" style={{ fontFamily: 'BMEULJIRO, sans-serif', textAlign: 'center',fontWeight: 'bold' }}>
                             <br /> 화면을 터치해주세요
                         </Typography>
                     </Box>

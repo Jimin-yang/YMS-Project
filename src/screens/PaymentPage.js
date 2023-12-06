@@ -88,7 +88,16 @@ const PaymentPage = ({ location }) => {
       },
       (rsp) => {
         if (rsp.success) {
-          history.push('/CompletePage');
+          history.push('/CompletePage', {
+            movieTitle,
+            theater,
+            time,
+            selectedSeats,
+            childCount,
+            adultCount,
+            merchantUid,
+          });
+          
         } else {
           alert('결제에 실패하였습니다.');
         }

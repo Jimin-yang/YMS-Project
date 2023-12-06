@@ -81,12 +81,7 @@ const SelectionPage = () => {
                   } else if (isDeleting) {
                     setSelectedMovie(showingId);
                     setOpenDelete(true);
-                  } else {
-                    history.push({
-                      pathname: '/MovieDetailsPage',
-                      state: { movieTitle, theaterName, timeValue },
-                    });
-                  }
+                  } 
                 })
                 .catch(error => {
                   console.error('Error fetching time: ', error);

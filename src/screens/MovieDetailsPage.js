@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     color: 'black', // 추가된 클래스
   },
   spaceBetween: {
-    display: 'flex',
+    
     marginBottom: theme.spacing(2),
   },
   marginTop: {
